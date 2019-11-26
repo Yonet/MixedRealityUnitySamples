@@ -46,7 +46,7 @@ PlayerSettings:
   defaultScreenHeight: 768
   defaultScreenWidthWeb: 960
   defaultScreenHeightWeb: 600
-  m_StereoRenderingPath: 2
+  m_StereoRenderingPath: 0
   m_ActiveColorSpace: 0
   m_MTRendering: 1
   m_StackTraceTypes: 010000000100000001000000010000000100000001000000
@@ -154,7 +154,7 @@ PlayerSettings:
       protectedContext: 0
       v2Signing: 0
     enable360StereoCapture: 0
-  isWsaHolographicRemotingEnabled: 0
+  isWsaHolographicRemotingEnabled: 1
   protectGraphicsMemory: 0
   enableFrameTimingStats: 0
   useHDRDisplay: 0
@@ -313,7 +313,8 @@ PlayerSettings:
     - OpenVR
   - m_BuildTarget: Windows Store Apps
     m_Enabled: 1
-    m_Devices: []
+    m_Devices:
+    - WindowsMR
   openGLRequireES31: 0
   openGLRequireES31AEP: 0
   openGLRequireES32: 0
@@ -567,7 +568,7 @@ PlayerSettings:
   m_MobileRenderingPath: 1
   metroPackageName: Template3D
   metroPackageVersion: 1.0.0.0
-  metroCertificatePath: C:\Users\ayyonet\Repos\HL2UnitySeed\Assets\WSATestCertificate.pfx
+  metroCertificatePath: Assets\WSATestCertificate.pfx
   metroCertificatePassword: 
   metroCertificateSubject: DefaultCompany
   metroCertificateIssuer: DefaultCompany
