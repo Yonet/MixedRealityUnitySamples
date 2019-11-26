@@ -2,7 +2,7 @@
 
 ## Overview
 
-You can use this repo to get started with [HoloLens development](https://docs.microsoft.com/windows/mixed-reality/?WT.mc_id=hololensseedproject-github-ayyonet) with [Unity 3D](https://docs.microsoft.com/windows/mixed-reality/unity-development-overview?WT.mc_id=hololensseedproject-github-ayyonet). You can download this repo and open the folder with Unity or clone the git repo by following the steps below. 
+You can use this repo to get started with [HoloLens development](https://docs.microsoft.com/windows/mixed-reality/?WT.mc_id=hololensseedproject-github-ayyonet) with [Unity 3D](https://docs.microsoft.com/windows/mixed-reality/unity-development-overview?WT.mc_id=hololensseedproject-github-ayyonet). You can download this repo and open the folder with Unity or clone the git repo by following the [setup steps](#setup) below. 
 
 Seed project already has the latest [Mixed Reality Toolkit v2](https://docs.microsoft.com/windows/mixed-reality/mrtk-getting-started?WT.mc_id=hololensseedproject-github-ayyonet) added as an asset. Unused assets will not be included in Unity build. If you prefer to not have the assets, you can delete them anytime. 
 
@@ -13,6 +13,7 @@ This repo is following the [HoloLens 2 Unity Tutorial](https://docs.microsoft.co
  - [Master branch](https://github.com/Yonet/HoloLensUnitySeedProject/tree/master)
  - [Step-1 branch](https://github.com/Yonet/HoloLensUnitySeedProject/tree/step-1): [Initializing your project and first application](https://docs.microsoft.com/en-us/windows/mixed-reality/mrlearning-base-ch1?WT.mc_id=hololensseedproject-github-ayyonet)
  - [Step-2 branch](https://github.com/Yonet/HoloLensUnitySeedProject/tree/step-2): [Creating user interface and configure Mixed Reality Toolkit](https://docs.microsoft.com/en-us/windows/mixed-reality/mrlearning-base-ch2?WT.mc_id=hololensseedproject-github-ayyonet)
+ - [Step-3 branch](https://github.com/Yonet/HoloLensUnitySeedProject/tree/step-3): [Placing dynamic content and using solvers](https://docs.microsoft.com/en-us/windows/mixed-reality/mrlearning-base-ch3?WT.mc_id=hololensseedproject-github-ayyonet)
  
 ## Setup
 
