@@ -8,10 +8,10 @@ Seed project already has the latest [Mixed Reality Toolkit v2](https://docs.micr
 
 You can get started with  [Mixed Reality Toolkit v2](https://docs.microsoft.com/windows/mixed-reality/mrtk-getting-started?WT.mc_id=hololensseedproject-github-ayyonet) example seens, under Assets > MixedRealityToolkit.Examples > Demos > ... > Scenes.
 
-![Mixed Reality Toolkit Example Scenes](Assets/images/MRTKAssetsScenes.png)
+![Mixed Reality Toolkit Example Scenes](Assets/Images/MRTKAssetsScenes.png)
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=8FBLNoeUSvk" target="_blank"><img src="http://img.youtube.com/vi/8FBLNoeUSvk/0.jpg" 
-alt="Mixed Reality Toolkit version 2.2.0 feature video" width="640" height="360" border="10"/></a>
+alt="Mixed Reality Toolkit version 2.2.0 feature video" width="854" height="480" border="10"/></a>
 
 ## Setup
 
