@@ -6,10 +6,12 @@ You can use this repo to get started with [HoloLens development](https://docs.mi
 
 Seed project already has the latest [Mixed Reality Toolkit v2](https://docs.microsoft.com/windows/mixed-reality/mrtk-getting-started?WT.mc_id=hololensseedproject-github-ayyonet) added as an asset. Unused assets will not be included in Unity build. If you prefer to not have the assets, you can delete them anytime. 
 
-You can get started with  [Mixed Reality Toolkit v2](https://docs.microsoft.com/windows/mixed-reality/mrtk-getting-started?WT.mc_id=hololensseedproject-github-ayyonet) example seens, under Assets>
+You can get started with  [Mixed Reality Toolkit v2](https://docs.microsoft.com/windows/mixed-reality/mrtk-getting-started?WT.mc_id=hololensseedproject-github-ayyonet) example seens, under Assets > MixedRealityToolkit.Examples > Demos > ... > Scenes.
+
+![Mixed Reality Toolkit Example Scenes](Assets/images/MRTKAssetsScenes.png)
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=8FBLNoeUSvk" target="_blank"><img src="http://img.youtube.com/vi/8FBLNoeUSvk/0.jpg" 
-alt="Mixed Reality Toolkit version 2.2.0 feature video" width="240" height="180" border="10"/></a>
+alt="Mixed Reality Toolkit version 2.2.0 feature video" width="640" height="360" border="10"/></a>
 
 ## Setup
 
