@@ -10,7 +10,7 @@ You can get started with  [Mixed Reality Toolkit v2](https://docs.microsoft.com/
 
 ![Mixed Reality Toolkit Example Scenes](Assets/Images/MRTKAssetsScenes.png)
 
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=8FBLNoeUSvk" target="_blank"><img src="http://img.youtube.com/vi/8FBLNoeUSvk/2.jpg" 
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=8FBLNoeUSvk" target="_blank"><img src="http://img.youtube.com/vi/8FBLNoeUSvk/0.jpg" 
 alt="Mixed Reality Toolkit version 2.2.0 feature video" width="854" height="480" border="10"/></a>
 
 ## Setup
