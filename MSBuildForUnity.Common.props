@@ -2,15 +2,15 @@
   <PropertyGroup>
     <MSBuildForUnityVersion>0.8.3</MSBuildForUnityVersion>
     
-    <MSBuildForUnityGeneratedOutputDirectory>C:\Users\ayyonet\Repos\UnityFiles\HoloLensUnitySeedProject\MSBuild\Projects</MSBuildForUnityGeneratedOutputDirectory>
-    <UnityProjectAssetsPath>C:\Users\ayyonet\Repos\UnityFiles\HoloLensUnitySeedProject\Assets</UnityProjectAssetsPath>
+    <MSBuildForUnityGeneratedOutputDirectory>C:\Users\ayyonet\Repos\UnityFiles\MixedRealityUnitySamples\MSBuild\Projects</MSBuildForUnityGeneratedOutputDirectory>
+    <UnityProjectAssetsPath>C:\Users\ayyonet\Repos\UnityFiles\MixedRealityUnitySamples\Assets</UnityProjectAssetsPath>
     <MSBuildForUnityDefaultOutputPath>$(UnityProjectAssetsPath)\Dependencies</MSBuildForUnityDefaultOutputPath>
     
     <UnityCurrentPlatform>WSA</UnityCurrentPlatform>
     <UnityCurrentTargetFramework>net46</UnityCurrentTargetFramework>
     
-    <UnityMajorVersion>2018</UnityMajorVersion>
-    <UnityMinorVersion>4</UnityMinorVersion>
+    <UnityMajorVersion>2019</UnityMajorVersion>
+    <UnityMinorVersion>3</UnityMinorVersion>
   </PropertyGroup>
   
   <Target Name="_RemoveOutputDirectory" AfterTargets="Clean">
