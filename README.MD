@@ -49,6 +49,18 @@ git remote add upstream https://github.com/Yonet/HoloLensUnitySeedProject.git
 git pull upstream master
 ```
 
+You can check to see if your remote origin and upstream by running:
+
+```
+git remote -v
+```
+
+You can remove the upstream anytime by running:
+
+```
+git remote remove upstream https://github.com/Yonet/HoloLensUnitySeedProject.git
+```
+
 ## Steps
 
 The branches in this repo is following the [HoloLens 2 Unity Tutorial](https://docs.microsoft.com/en-us/windows/mixed-reality/mrlearning-base?WT.mc_id=hololensseedproject-github-ayyonet). You can find the steps in different branches of the repo. 
