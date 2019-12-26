@@ -40,6 +40,14 @@ git remote add origin git@github.com:<YOUR ACCOUNT>/<YOUR REPOS>.git
 git push -u --force origin master
 
 ```
+## How to update your project to latest seed?
+
+Whenever there is a new MRTK package, this repo will be updated with the latest. You can automaticly get the latest packages by adding the seed repo as your upstream and pulling from it. 
+
+```
+git remote add upstream https://github.com/Yonet/HoloLensUnitySeedProject.git
+git pull upstream master
+```
 
 ## Steps
 
