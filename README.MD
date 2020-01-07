@@ -70,4 +70,5 @@ The branches in this repo is following the [HoloLens 2 Unity Tutorial](https://d
  - [Step-2 branch](https://github.com/Yonet/HoloLensUnitySeedProject/tree/step-2): [Creating user interface and configure Mixed Reality Toolkit](https://docs.microsoft.com/en-us/windows/mixed-reality/mrlearning-base-ch2?WT.mc_id=hololensseedproject-github-ayyonet)
  - [Step-3 branch](https://github.com/Yonet/HoloLensUnitySeedProject/tree/step-3): [Placing dynamic content and using solvers](https://docs.microsoft.com/en-us/windows/mixed-reality/mrlearning-base-ch3?WT.mc_id=hololensseedproject-github-ayyonet)
 - [Lesson5 branch](https://github.com/Yonet/MixedRealityUnitySamples/tree/lesson5)
-![Lesson 5 Bing Maps SDK](Assets/Images/mapsSDK.png)
+
+![Lesson 5 Bing Maps SDK](Assets/Images/mapSDK.png)
