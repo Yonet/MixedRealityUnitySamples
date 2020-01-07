@@ -1,0 +1,8 @@
+﻿Maps SDK, a Microsoft Garage Project - Version 0.4.2
+Copyright (C) 2019 Microsoft Corporation. All rights reserved.
+
+License and Terms of Service
+============================
+By using Maps SDK, a Microsoft Garage Project you accept the Bing Maps Platform APIs Terms of Use.
+Please review our TOU carefully. It describes in detail what you can and can't do with the SDK.
+https://www.microsoft.com/en-us/maps/product/terms
