@@ -509,7 +509,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _version: 1
-  _bingMapsKey: AiLjvaRXGTuv9fr36zYHtoH6VI-DMfx6nZYvY3CVxOGdGypHeKYMAFMarkboMES_
+  _bingMapsKey: 
   _showMapDataInEditor: 1
   _mapEdgeColor: {r: 0.62352943, g: 0.64705884, b: 0.69411767, a: 1}
   _mapEdgeColorFadeDistance: 0.02

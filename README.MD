@@ -8,7 +8,7 @@ Seed project already has the latest [Mixed Reality Toolkit v2](https://docs.micr
 
 You can get started with  [Mixed Reality Toolkit v2](https://docs.microsoft.com/windows/mixed-reality/mrtk-getting-started?WT.mc_id=hololensseedproject-github-ayyonet) example seens, under Assets > MixedRealityToolkit.Examples > Demos > ... > Scenes.
 
-![Mixed Reality Toolkit Example Scenes](Assets/Images/MRTKAssetsScenes.png)
+![Mixed Reality Toolkit Example Scenes](Assets/Images/mrtkComponents.png)
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=8FBLNoeUSvk" target="_blank"><img src="http://img.youtube.com/vi/8FBLNoeUSvk/0.jpg" 
 alt="Mixed Reality Toolkit version 2.2.0 feature video" width="854" height="480" border="10"/></a>
@@ -61,7 +61,7 @@ You can remove the upstream anytime by running:
 git remote remove upstream https://github.com/Yonet/HoloLensUnitySeedProject.git
 ```
 
-## Steps
+## Branches
 
 The branches in this repo is following the [HoloLens 2 Unity Tutorial](https://docs.microsoft.com/en-us/windows/mixed-reality/mrlearning-base?WT.mc_id=hololensseedproject-github-ayyonet). You can find the steps in different branches of the repo. 
 
@@ -69,3 +69,5 @@ The branches in this repo is following the [HoloLens 2 Unity Tutorial](https://d
  - [Step-1 branch](https://github.com/Yonet/HoloLensUnitySeedProject/tree/step-1): [Initializing your project and first application](https://docs.microsoft.com/en-us/windows/mixed-reality/mrlearning-base-ch1?WT.mc_id=hololensseedproject-github-ayyonet)
  - [Step-2 branch](https://github.com/Yonet/HoloLensUnitySeedProject/tree/step-2): [Creating user interface and configure Mixed Reality Toolkit](https://docs.microsoft.com/en-us/windows/mixed-reality/mrlearning-base-ch2?WT.mc_id=hololensseedproject-github-ayyonet)
  - [Step-3 branch](https://github.com/Yonet/HoloLensUnitySeedProject/tree/step-3): [Placing dynamic content and using solvers](https://docs.microsoft.com/en-us/windows/mixed-reality/mrlearning-base-ch3?WT.mc_id=hololensseedproject-github-ayyonet)
+- [Lesson5 branch](https://github.com/Yonet/MixedRealityUnitySamples/tree/lesson5)
+![Lesson 5 Bing Maps SDK](Assets/Images/mapsSDK.png)
