@@ -15,6 +15,31 @@ Find the latest [MRTK release notes here](https://microsoft.github.io/MixedReali
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=8FBLNoeUSvk" target="_blank"><img src="http://img.youtube.com/vi/8FBLNoeUSvk/0.jpg" 
 alt="Mixed Reality Toolkit version 2.2.0 feature video" width="854" height="480" border="10"/></a>
 
+## What's New?
+
+* Initial support for Unity 2019.3 and the XR SDK architecture.
+* Centralized dependencies folder (when using MSBuild for Unity).
+* Hand physics service.
+
+![Hand physics service](Assets/Images/mrtkCollision.gif)
+
+* Non-native keyboard (Experimental).
+
+![Non-native keyboard (Experimental)](Assets/Images/mrtkKeyboard.png)
+
+* Hand coach (Experimental).
+
+![Hand coach (Experimental)](Assets/Images/mrtkHand.png)
+
+* Follow solver (Experimental).
+A solver that matches HoloLens 2 shell behavior.
+
+![Hand coach (Experimental)](Assets/Images/mrtkFollow.gif)
+
+* ObjectManipulator and BoundsControl (Experimental).
+
+![Hand coach (Experimental)](Assets/Images/mrtkBoundsCtrl.gif)
+
 ## Setup
 
 You can clone and delete this repository's history and start a new git project by running the below script. You need to create your own github repo first. Replace <your-project-name> with your own github project url. 
@@ -29,7 +54,7 @@ OR
 // Clone the seed project
 git clone --depth=1 https://github.com/Yonet/HoloLensUnitySeedProject.git
 
--- Remove the history from 
+-- Remove the history from the repo
 rm -rf .git
 
 -- recreate the repos from the current content only
