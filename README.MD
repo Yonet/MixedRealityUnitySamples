@@ -61,13 +61,4 @@ You can remove the upstream anytime by running:
 
 ```
 git remote remove upstream https://github.com/Yonet/HoloLensUnitySeedProject.git
-```
-
-## Steps
-
-The branches in this repo is following the [HoloLens 2 Unity Tutorial](https://docs.microsoft.com/en-us/windows/mixed-reality/mrlearning-base?WT.mc_id=hololensseedproject-github-ayyonet). You can find the steps in different branches of the repo. 
-
- - [Master branch](https://github.com/Yonet/HoloLensUnitySeedProject/tree/master)
- - [Step-1 branch](https://github.com/Yonet/HoloLensUnitySeedProject/tree/step-1): [Initializing your project and first application](https://docs.microsoft.com/en-us/windows/mixed-reality/mrlearning-base-ch1?WT.mc_id=hololensseedproject-github-ayyonet)
- - [Step-2 branch](https://github.com/Yonet/HoloLensUnitySeedProject/tree/step-2): [Creating user interface and configure Mixed Reality Toolkit](https://docs.microsoft.com/en-us/windows/mixed-reality/mrlearning-base-ch2?WT.mc_id=hololensseedproject-github-ayyonet)
- - [Step-3 branch](https://github.com/Yonet/HoloLensUnitySeedProject/tree/step-3): [Placing dynamic content and using solvers](https://docs.microsoft.com/en-us/windows/mixed-reality/mrlearning-base-ch3?WT.mc_id=hololensseedproject-github-ayyonet)
+``` 
