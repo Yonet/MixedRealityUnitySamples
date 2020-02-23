@@ -11,7 +11,6 @@ namespace Microsoft.MixedReality.Toolkit.Tools.Runtime
     /// Displays a specified axis / button value on a specific TextMesh.
     /// Will display all active axes and buttons if the input type is None.
     /// </summary>
-    [AddComponentMenu("Scripts/MRTK/Tools/DisplayInputResult")]
     public class DisplayInputResult : MonoBehaviour
     {
         [SerializeField]

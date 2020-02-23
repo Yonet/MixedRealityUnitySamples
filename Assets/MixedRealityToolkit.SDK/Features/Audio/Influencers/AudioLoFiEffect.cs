@@ -19,7 +19,6 @@ namespace Microsoft.MixedReality.Toolkit.Audio
     [RequireComponent(typeof(AudioLowPassFilter))]
     [RequireComponent(typeof(AudioHighPassFilter))]
     [DisallowMultipleComponent]
-    [AddComponentMenu("Scripts/MRTK/SDK/AudioLoFiEffect")]
     public class AudioLoFiEffect : MonoBehaviour
     {
         [Tooltip("The quality level of the simulated audio source.")]

@@ -11,7 +11,6 @@ namespace Microsoft.MixedReality.Toolkit.UI
     /// Scales an object relative the scale of the AnchorTransform
     /// </summary>
     [ExecuteInEditMode]
-    [AddComponentMenu("Scripts/MRTK/SDK/ButtonSizeOffset")]
     public class ButtonSizeOffset : MonoBehaviour
     {
 

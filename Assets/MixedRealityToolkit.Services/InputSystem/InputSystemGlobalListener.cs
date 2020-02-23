@@ -13,7 +13,6 @@ namespace Microsoft.MixedReality.Toolkit.Input
     /// </summary>
     [Obsolete("InputSystemGlobalListener uses obsolete global input event registration API. " +
         "Use RegisterHandler/UnregisterHandler API directly (preferred) or InputSystemGlobalHandlerListener instead.")]
-    [AddComponentMenu("Scripts/MRTK/Obsolete/InputSystemGlobalListener")]
     public class InputSystemGlobalListener : MonoBehaviour
     {
         private bool lateInitialize = true;

@@ -9,7 +9,6 @@ namespace Microsoft.MixedReality.Toolkit.Physics
     /// A Distorter that distorts points based on their distance and direction to the world
     /// center of gravity as defined by WorldCenterOfGravity.
     /// </summary>
-    [AddComponentMenu("Scripts/MRTK/Core/DistorterGravity")]
     public class DistorterGravity : Distorter
     {
         [SerializeField]

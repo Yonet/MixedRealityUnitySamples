@@ -7,7 +7,7 @@ using Microsoft.MixedReality.Toolkit.Utilities;
 namespace Microsoft.MixedReality.Toolkit.WindowsMixedReality.Input
 {
     /// <summary>
-    /// A Windows Mixed Reality GGV hand instance.
+    /// A Windows Mixed Reality Controller Instance.
     /// </summary>
     [MixedRealityController(
         SupportedControllerType.GGVHand,
@@ -15,16 +15,18 @@ namespace Microsoft.MixedReality.Toolkit.WindowsMixedReality.Input
     public class WindowsMixedRealityGGVHand : BaseWindowsMixedRealitySource
     {
         public WindowsMixedRealityGGVHand(TrackingState trackingState, Handedness controllerHandedness, IMixedRealityInputSource inputSource = null, MixedRealityInteractionMapping[] interactions = null)
-        : base(trackingState, controllerHandedness, inputSource, interactions) { }
+        : base(trackingState, controllerHandedness, inputSource, interactions)
+        {
+        }
 
         /// <summary>
-        /// The GGV hand default interactions.
+        /// The GGV hand default interactions
         /// </summary>
         /// <remarks>A single interaction mapping works for both left and right controllers.</remarks>
         public override MixedRealityInteractionMapping[] DefaultInteractions { get; } = new[]
         {
-            new MixedRealityInteractionMapping(0, "Select", AxisType.Digital, DeviceInputType.Select),
-            new MixedRealityInteractionMapping(1, "Grip Pose", AxisType.SixDof, DeviceInputType.SpatialGrip),
+            new MixedRealityInteractionMapping(0, "Select", AxisType.Digital, DeviceInputType.Select, MixedRealityInputAction.None),
+            new MixedRealityInteractionMapping(1, "Grip Pose", AxisType.SixDof, DeviceInputType.SpatialGrip, MixedRealityInputAction.None),
         };
     }
 }

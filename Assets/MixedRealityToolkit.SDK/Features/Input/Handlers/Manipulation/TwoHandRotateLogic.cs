@@ -17,7 +17,7 @@ namespace Microsoft.MixedReality.Toolkit.Physics
     /// When a manipulation starts, call Setup.
     /// Call Update any time to update the move logic and get a new rotation for the object.
     /// </summary>
-    internal class TwoHandRotateLogic
+    public class TwoHandRotateLogic
     {
         private Vector3 startHandlebar;
         private Quaternion startRotation;
@@ -25,28 +25,57 @@ namespace Microsoft.MixedReality.Toolkit.Physics
         /// <summary>
         /// Setup the rotation logic.
         /// </summary>
-        /// <param name="handsPressedArray">Array with positions of down pointers</param>
-        public void Setup(Vector3[] handsPressedArray, Transform t)
+        public void Setup(Dictionary<uint, Vector3> handsPressedMap, Transform t, RotationConstraintType rotationConstraint)
         {
-            startHandlebar = GetHandlebarDirection(handsPressedArray);
+            startHandlebar = ProjectHandlebarGivenConstraint(rotationConstraint, GetHandlebarDirection(handsPressedMap));
             startRotation = t.rotation;
         }
 
         /// <summary>
         /// Update the rotation based on input.
         /// </summary>
-        /// <param name="handsPressedArray">Array with positions of down pointers, order should be the same as handsPressedArray provided in Setup</param>
         /// <returns>Desired rotation</returns>
-        public Quaternion Update(Vector3[] handsPressedArray, Quaternion currentRotation)
+        public Quaternion Update(Dictionary<uint, Vector3> handsPressedMap, Quaternion currentRotation, RotationConstraintType rotationConstraint, bool useLocalSpaceForConstraint)
         {
-            var handlebarDirection = GetHandlebarDirection(handsPressedArray);
-            return Quaternion.FromToRotation(startHandlebar, handlebarDirection) * startRotation;
+            var handlebarDirection = ProjectHandlebarGivenConstraint(rotationConstraint, GetHandlebarDirection(handsPressedMap));
+            return useLocalSpaceForConstraint
+                ? startRotation * Quaternion.FromToRotation(startHandlebar, handlebarDirection)
+                : Quaternion.FromToRotation(startHandlebar, handlebarDirection) * startRotation;
         }
 
-        private static Vector3 GetHandlebarDirection(Vector3[] handsPressedArray)
+        private static Vector3 ProjectHandlebarGivenConstraint(RotationConstraintType constraint, Vector3 handlebarRotation)
         {
-            Debug.Assert(handsPressedArray.Length > 1);
-            return handsPressedArray[1] - handsPressedArray[0];
+            Vector3 result = handlebarRotation;
+            switch (constraint)
+            {
+                case RotationConstraintType.XAxisOnly:
+                    result.x = 0;
+                    break;
+                case RotationConstraintType.YAxisOnly:
+                    result.y = 0;
+                    break;
+                case RotationConstraintType.ZAxisOnly:
+                    result.z = 0;
+                    break;
+                case RotationConstraintType.None:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(constraint), constraint, null);
+            }
+            return result;
+        }
+
+        private static Vector3 GetHandlebarDirection(Dictionary<uint, Vector3> handsPressedMap)
+        {
+            Debug.Assert(handsPressedMap.Count > 1);
+            var handsEnumerator = handsPressedMap.Values.GetEnumerator();
+            handsEnumerator.MoveNext();
+            var hand1 = handsEnumerator.Current;
+            handsEnumerator.MoveNext();
+            var hand2 = handsEnumerator.Current;
+            handsEnumerator.Dispose();
+
+            return hand2 - hand1;
         }
     }
 }

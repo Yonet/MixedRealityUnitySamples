@@ -40,7 +40,7 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
             InternetClientCapability,
 #if UNITY_2019_3_OR_NEWER
             EyeTrackingCapability,
-#endif // UNITY_2019_3_OR_NEWER
+#endif
 
             // Android Settings
             AndroidMultiThreadedRendering = 2000,
@@ -52,90 +52,45 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
             IOSCameraUsageDescription,
         };
 
-        private class ConfigGetter
-        {
-            /// <summary>
-            /// Array of build targets where the get action is valid
-            /// </summary>
-            public BuildTarget[] ValidTargets;
-
-            /// <summary>
-            /// Action to perform to determine if the current configuration is correctly enabled
-            /// </summary>
-            public Func<bool> GetAction;
-
-            public ConfigGetter(Func<bool> get, BuildTarget target = BuildTarget.NoTarget)
-            {
-                GetAction = get;
-                ValidTargets = new BuildTarget[] { target };
-            }
-
-            public ConfigGetter(Func<bool> get, BuildTarget[] targets)
-            {
-                GetAction = get;
-                ValidTargets = targets;
-            }
-
-            /// <summary>
-            /// Returns true if the active build target is contained in the ValidTargets list or the list contains a BuildTarget.NoTarget entry, false otherwise
-            /// </summary>
-            public bool IsActiveBuildTargetValid()
-            {
-                foreach (var buildTarget in ValidTargets)
-                {
-                    if (buildTarget == BuildTarget.NoTarget || buildTarget == EditorUserBuildSettings.activeBuildTarget)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-        }
-
         // The check functions for each type of setting
-        private static readonly Dictionary<Configurations, ConfigGetter> ConfigurationGetters = new Dictionary<Configurations, ConfigGetter>()
+        private static readonly Dictionary<Configurations, Func<bool>> ConfigurationGetters = new Dictionary<Configurations, Func<bool>>()
         {
-            { Configurations.LatestScriptingRuntime, new ConfigGetter(() => { return IsLatestScriptingRuntime(); }) },
-            { Configurations.ForceTextSerialization, new ConfigGetter(() => { return IsForceTextSerialization(); }) },
-            { Configurations.VisibleMetaFiles, new ConfigGetter(() => { return IsVisibleMetaFiles(); }) },
-            { Configurations.VirtualRealitySupported, new ConfigGetter(() => { return XRSettingsUtilities.LegacyXREnabled; }) },
-            { Configurations.SinglePassInstancing, new ConfigGetter(() => { return MixedRealityOptimizeUtils.IsSinglePassInstanced(); }) },
-            { Configurations.SpatialAwarenessLayer, new ConfigGetter(() => { return HasSpatialAwarenessLayer(); }) },
-            { Configurations.EnableMSBuildForUnity, new ConfigGetter(() => { return PackageManifestUpdater.IsMSBuildForUnityEnabled(); }, BuildTarget.WSAPlayer) },
+            { Configurations.LatestScriptingRuntime,  () => { return IsLatestScriptingRuntime(); } },
+            { Configurations.ForceTextSerialization,  () => { return IsForceTextSerialization(); } },
+            { Configurations.VisibleMetaFiles,  () => { return IsVisibleMetaFiles(); } },
+            { Configurations.VirtualRealitySupported,  () => { return PlayerSettings.virtualRealitySupported; } },
+            { Configurations.SinglePassInstancing,  () => { return MixedRealityOptimizeUtils.IsSinglePassInstanced(); } },
+            { Configurations.SpatialAwarenessLayer,  () => { return HasSpatialAwarenessLayer(); } },
+            { Configurations.EnableMSBuildForUnity, () => { return IsMSBuildForUnityEnabled(); } },
 
             // UWP Capabilities
-            { Configurations.SpatialPerceptionCapability, new ConfigGetter(() => { return GetCapability(PlayerSettings.WSACapability.SpatialPerception); }, BuildTarget.WSAPlayer) },
-            { Configurations.MicrophoneCapability, new ConfigGetter(() => { return GetCapability(PlayerSettings.WSACapability.Microphone); }, BuildTarget.WSAPlayer) },
-            { Configurations.InternetClientCapability, new ConfigGetter(() => { return GetCapability(PlayerSettings.WSACapability.InternetClient); }, BuildTarget.WSAPlayer) },
+            { Configurations.SpatialPerceptionCapability,  () => { return PlayerSettings.WSA.GetCapability(PlayerSettings.WSACapability.SpatialPerception); } },
+            { Configurations.MicrophoneCapability,  () => { return PlayerSettings.WSA.GetCapability(PlayerSettings.WSACapability.Microphone); } },
+            { Configurations.InternetClientCapability,  () => { return PlayerSettings.WSA.GetCapability(PlayerSettings.WSACapability.InternetClient); } },
 #if UNITY_2019_3_OR_NEWER
-            { Configurations.EyeTrackingCapability, new ConfigGetter(() => { return GetCapability(PlayerSettings.WSACapability.GazeInput); }, BuildTarget.WSAPlayer) },
-#endif // UNITY_2019_3_OR_NEWER
+            { Configurations.EyeTrackingCapability,  () => { return PlayerSettings.WSA.GetCapability(PlayerSettings.WSACapability.GazeInput); } },
+#endif
 
             // Android Settings
-            { Configurations.AndroidMultiThreadedRendering, 
-                new ConfigGetter(() => { return PlayerSettings.GetMobileMTRendering(BuildTargetGroup.Android) == false; }, BuildTarget.Android) },
-            { Configurations.AndroidMinSdkVersion,
-                new ConfigGetter(() => { return PlayerSettings.Android.minSdkVersion >= MinAndroidSdk; }, BuildTarget.Android) },
+            { Configurations.AndroidMultiThreadedRendering, () => { return PlayerSettings.GetMobileMTRendering(BuildTargetGroup.Android) == false; } },
+            { Configurations.AndroidMinSdkVersion, () => { return PlayerSettings.Android.minSdkVersion >= MinAndroidSdk; } },
 
             // iOS Settings
-            { Configurations.IOSMinOSVersion, new ConfigGetter(() => {
+            { Configurations.IOSMinOSVersion, () => {
                     float version;
                     if (!float.TryParse(PlayerSettings.iOS.targetOSVersionString, out version)) { return false; }
-                    return version >= iOSMinOsVersion; }, BuildTarget.iOS) },
-            { Configurations.IOSArchitecture, 
-                new ConfigGetter(() => { return PlayerSettings.GetArchitecture(BuildTargetGroup.iOS) == RequirediOSArchitecture; }, BuildTarget.iOS) },
-            { Configurations.IOSCameraUsageDescription, 
-                new ConfigGetter(() => { return !string.IsNullOrWhiteSpace(PlayerSettings.iOS.cameraUsageDescription); }, BuildTarget.iOS) },
+                    return version >= iOSMinOsVersion; } },
+            { Configurations.IOSArchitecture, () => { return PlayerSettings.GetArchitecture(BuildTargetGroup.iOS) == RequirediOSArchitecture; } },
+            { Configurations.IOSCameraUsageDescription, () => { return !string.IsNullOrWhiteSpace(PlayerSettings.iOS.cameraUsageDescription); } },
         };
 
         // The configure functions for each type of setting
-        private static readonly Dictionary<Configurations, Action> ConfigurationSetters = new Dictionary<Configurations, Action>()
+        private static Dictionary<Configurations, Action> ConfigurationSetters = new Dictionary<Configurations, Action>()
         {
-            { Configurations.LatestScriptingRuntime, () => { SetLatestScriptingRuntime(); } },
+            { Configurations.LatestScriptingRuntime,  () => { SetLatestScriptingRuntime(); } },
             { Configurations.ForceTextSerialization,  () => { SetForceTextSerialization(); } },
             { Configurations.VisibleMetaFiles,  () => { SetVisibleMetaFiles(); } },
-            { Configurations.VirtualRealitySupported,  () => { XRSettingsUtilities.LegacyXREnabled = true; } },
+            { Configurations.VirtualRealitySupported,  () => { PlayerSettings.virtualRealitySupported = true; } },
             { Configurations.SinglePassInstancing,  () => { MixedRealityOptimizeUtils.SetSinglePassInstanced(); } },
             { Configurations.SpatialAwarenessLayer,  () => { SetSpatialAwarenessLayer(); } },
             { Configurations.EnableMSBuildForUnity, () => { PackageManifestUpdater.EnsureMSBuildForUnity(); } },
@@ -146,7 +101,7 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
             { Configurations.InternetClientCapability,  () => { PlayerSettings.WSA.SetCapability(PlayerSettings.WSACapability.InternetClient, true); } },
 #if UNITY_2019_3_OR_NEWER
             { Configurations.EyeTrackingCapability,  () => { PlayerSettings.WSA.SetCapability(PlayerSettings.WSACapability.GazeInput, true); } },
-#endif // UNITY_2019_3_OR_NEWER
+#endif
 
             // Android Settings
             { Configurations.AndroidMultiThreadedRendering, () => { PlayerSettings.SetMobileMTRendering(BuildTargetGroup.Android, false); } },
@@ -167,11 +122,7 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
         {
             if (ConfigurationGetters.ContainsKey(config))
             {
-                var configGetter = ConfigurationGetters[config];
-                if (configGetter.IsActiveBuildTargetValid())
-                {
-                    return configGetter.GetAction.Invoke();
-                }
+                return ConfigurationGetters[config].Invoke();
             }
 
             return false;
@@ -183,14 +134,9 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
         /// <param name="config">The setting configuration that needs to be checked</param>
         public static void Configure(Configurations config)
         {
-            // We use the config getter to check to see if a configuration is valid for the current build target.
-            if (ConfigurationGetters.ContainsKey(config))
+            if (ConfigurationSetters.ContainsKey(config))
             {
-                var configGetter = ConfigurationGetters[config];
-                if (configGetter.IsActiveBuildTargetValid() && ConfigurationSetters.ContainsKey(config))
-                {
-                    ConfigurationSetters[config].Invoke();
-                }
+                ConfigurationSetters[config].Invoke();
             }
         }
 
@@ -200,9 +146,9 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
         /// <returns>true if entire project is configured as recommended, false otherwise</returns>
         public static bool IsProjectConfigured()
         {
-            foreach (var configGetter in ConfigurationGetters)
+            foreach (var getter in ConfigurationGetters)
             {
-                if (configGetter.Value.IsActiveBuildTargetValid() && !configGetter.Value.GetAction.Invoke())
+                if (!getter.Value.Invoke())
                 {
                     return false;
                 }
@@ -221,14 +167,17 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
             {
                 foreach (var setter in ConfigurationSetters)
                 {
-                    Configure(setter.Key);
+                    setter.Value.Invoke();
                 }
             }
             else
             {
                 foreach (var key in filter)
                 {
-                    Configure(key);
+                    if (ConfigurationSetters.ContainsKey(key))
+                    {
+                        ConfigurationSetters[key].Invoke();
+                    }
                 }
             }
 
@@ -245,7 +194,7 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
             return PlayerSettings.scriptingRuntimeVersion == ScriptingRuntimeVersion.Latest;
 #else
         return true;
-#endif // UNITY_2019_3_OR_NEWER
+#endif
         }
 
         /// <summary>
@@ -256,7 +205,7 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
 #if !UNITY_2019_3_OR_NEWER
             PlayerSettings.scriptingRuntimeVersion = ScriptingRuntimeVersion.Latest;
             EditorApplication.OpenProject(Directory.GetParent(Application.dataPath).ToString());
-#endif // UNITY_2019_3_OR_NEWER
+#endif
         }
 
         /// <summary>
@@ -265,6 +214,36 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
         public static bool IsForceTextSerialization()
         {
             return EditorSettings.serializationMode == SerializationMode.ForceText;
+        }
+
+        /// <summary>
+        /// Checks package manifest to see if MSBuild for Unity is included in the dependencies.
+        /// </summary>
+        public static bool IsMSBuildForUnityEnabled()
+        {
+            // Locate the full path to the package manifest.
+            DirectoryInfo projectRoot = new DirectoryInfo(Application.dataPath).Parent;
+            string[] paths = { projectRoot.FullName, "Packages", "manifest.json" };
+            string manifestPath = Path.Combine(paths);
+
+            // Verify that the package manifest file exists.
+            if (!File.Exists(manifestPath))
+            {
+                Debug.LogError($"Package manifest file ({manifestPath}) could not be found.");
+                return false;
+            }
+
+            // Load the manfiest file.
+            string manifestFileContents = File.ReadAllText(manifestPath);
+            if (string.IsNullOrWhiteSpace(manifestFileContents))
+            {
+                Debug.LogError($"Failed to read the package manifest file ({manifestPath})");
+                return false;
+            }
+
+            // Attempt to find the MSBuild for Unity package name.
+            const string msBuildPackageName = "com.microsoft.msbuildforunity";
+            return manifestFileContents.Contains(msBuildPackageName);
         }
 
         /// <summary>
@@ -318,9 +297,6 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
         /// </summary>
         public static void ApplyXRSettings()
         {
-            // Ensure compatibility with the pre-2019.3 XR architecture for customers / platforms
-            // with legacy requirements.
-#pragma warning disable 0618
             BuildTargetGroup targetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
 
             List<string> targetSDKs = new List<string>();
@@ -337,12 +313,6 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
                 PlayerSettings.SetVirtualRealitySDKs(targetGroup, targetSDKs.ToArray());
                 PlayerSettings.SetVirtualRealitySupported(targetGroup, true);
             }
-#pragma warning restore 0618
-        }
-
-        private static bool GetCapability(PlayerSettings.WSACapability capability)
-        {
-            return MixedRealityOptimizeUtils.IsBuildTargetUWP() ? PlayerSettings.WSA.GetCapability(capability) : true;
         }
     }
 }

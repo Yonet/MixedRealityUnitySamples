@@ -14,7 +14,7 @@ namespace Microsoft.MixedReality.Toolkit.UI
         /// <summary>
         /// The object being manipulated
         /// </summary>
-        public GameObject ManipulationSource { get; set; }
+        public ManipulationHandler ManipulationSource { get; set; }
 
         /// <summary>
         /// The pointer manipulating the object or hovering over the object. Will be null for OnManipulationEnded.

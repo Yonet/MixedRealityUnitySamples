@@ -46,9 +46,6 @@ namespace Microsoft.MixedReality.Toolkit.CameraSystem
         [SerializeField]
         private BaseCameraSettingsProfile settingsProfile;
 
-        /// <inheritdoc />
-        public BaseMixedRealityProfile Profile => settingsProfile;
-
         /// <summary>
         /// Camera settings specific configuration profile.
         /// </summary>

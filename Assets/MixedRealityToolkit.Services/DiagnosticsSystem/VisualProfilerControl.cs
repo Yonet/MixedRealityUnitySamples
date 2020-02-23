@@ -8,7 +8,6 @@ namespace Microsoft.MixedReality.Toolkit.Diagnostics
     /// <summary>
     /// Class that exposes methods to show/hide the visual profiler
     /// </summary>
-    [AddComponentMenu("Scripts/MRTK/Services/VisualProfilerControl")]
     public class VisualProfilerControl : MonoBehaviour
     {
         public void ToggleProfiler()

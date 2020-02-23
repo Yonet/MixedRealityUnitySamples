@@ -11,7 +11,6 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Facades
     /// Lightweight MonoBehavior used to represent active services in scene.
     /// </summary>
     [ExecuteAlways]
-    [AddComponentMenu("Scripts/MRTK/Core/ServiceFacade")]
     public class ServiceFacade : MonoBehaviour
     {
         public static Dictionary<Type, ServiceFacade> FacadeServiceLookup = new Dictionary<Type, ServiceFacade>();

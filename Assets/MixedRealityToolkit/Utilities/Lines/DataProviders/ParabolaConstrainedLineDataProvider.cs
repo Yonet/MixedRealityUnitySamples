@@ -8,7 +8,6 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
     /// <summary>
     /// Generates a parabolic line between two points.
     /// </summary>
-    [AddComponentMenu("Scripts/MRTK/Core/ParabolaConstrainedLineDataProvider")]
     public class ParabolaConstrainedLineDataProvider : ParabolaLineDataProvider
     {
         [SerializeField]

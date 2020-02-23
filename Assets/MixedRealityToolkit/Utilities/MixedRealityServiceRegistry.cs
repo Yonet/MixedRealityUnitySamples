@@ -390,7 +390,7 @@ namespace Microsoft.MixedReality.Toolkit
         /// <remarks>
         /// The list is sorted in ascending priority order.
         /// </remarks>
-        public static IReadOnlyList<IMixedRealityService> GetAllServices()
+        public static IReadOnlyCollection<IMixedRealityService> GetAllServices()
         {
             return allServices;
         }

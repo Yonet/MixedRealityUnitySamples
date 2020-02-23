@@ -11,7 +11,7 @@ namespace Microsoft.MixedReality.Toolkit.Input
         typeof(IMixedRealityInputSystem),
         (SupportedPlatforms)(-1), // All platforms supported by Unity
         "Hand Joint Service")]
-    [HelpURL("https://microsoft.github.io/MixedRealityToolkit-Unity/Documentation/Input/HandTracking.html")]
+    [HelpURL("https://microsoft.github.io/MixedRealityToolkit-Unity/Documentation/InputSystem/HandTracking.html")]
     public class HandJointService : BaseInputDeviceManager, IMixedRealityHandJointService
     {
         private IMixedRealityHand leftHand;
@@ -57,12 +57,10 @@ namespace Microsoft.MixedReality.Toolkit.Input
         /// <inheritdoc />
         public override void LateUpdate()
         {
-            base.LateUpdate();
-
             leftHand = null;
             rightHand = null;
 
-            foreach (var detectedController in Service.DetectedControllers)
+            foreach (var detectedController in InputSystem.DetectedControllers)
             {
                 var hand = detectedController as IMixedRealityHand;
                 if (hand != null)
@@ -110,8 +108,6 @@ namespace Microsoft.MixedReality.Toolkit.Input
         /// <inheritdoc />
         public override void Disable()
         {
-            base.Disable();
-
             // Check existence of fauxJoints before destroying. This avoids a (harmless) race
             // condition when the service is getting destroyed at the same time that the gameObjects
             // are being destroyed at shutdown.

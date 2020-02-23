@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
@@ -31,7 +30,7 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
         // This module only exists for testing purposes, and is used in edit mode tests in conjunction
         // with MixedRealityToolkitFiles to ensure that this class is able to reason over MRTK
         // files that are placed outside of the root asset folder.
-        AdhocTesting = -1,
+        AdhocTesting,
     }
 
     /// <summary>
@@ -41,6 +40,10 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
     /// This class works by looking for sentinel files (following the pattern MRTK.*.sentinel,
     /// for example, MRTK.Core.sentinel) in order to identify where the MRTK is located
     /// within the project.
+    ///
+    /// If the MRTK is being consumed as code that sits within the Assets folder, the "root"
+    /// MRTK folder must be at most three directories deep - this search code will only reason
+    /// over MRTK folders that sit in a depth range [0, 3].
     /// </remarks>
     [InitializeOnLoad]
     public static class MixedRealityToolkitFiles
@@ -73,83 +76,49 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
         {
             public static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
             {
+                searchForFoldersTask.Wait();
+
                 foreach (string asset in importedAssets.Concat(movedAssets))
                 {
-                    if (IsSentinelFile(asset))
-                    {
-                        string fullAssetPath = ResolveFullAssetsPath(asset);
-                        TryRegisterModuleViaFile(fullAssetPath);
-                    }
+                    string fullAssetPath = ResolveFullAssetsPath(asset);
+                    TryRegisterModuleFile(fullAssetPath);
                 }
 
                 foreach (string asset in deletedAssets.Concat(movedFromAssetPaths))
                 {
-                    if (IsSentinelFile(asset))
-                    {
-                        string fullAssetPath = ResolveFullAssetsPath(asset);
-                        string folderPath = Path.GetDirectoryName(fullAssetPath);
-                        TryUnregisterModuleFolder(folderPath);
-                    }
+                    string fullAssetPath = ResolveFullAssetsPath(asset);
+                    string folder = Path.GetDirectoryName(fullAssetPath);
+                    TryUnregisterModuleFolder(folder);
                 }
             }
         }
 
-        // Storage of our list of module paths (stored as absolute file paths) and bucketed by ModuleType
         private readonly static Dictionary<MixedRealityToolkitModuleType, HashSet<string>> mrtkFolders =
             new Dictionary<MixedRealityToolkitModuleType, HashSet<string>>();
-
-        private static Task searchForFoldersTask = null;
-        private static CancellationTokenSource searchForFoldersToken;
-
-        private static string NormalizeSeparators(string path) =>
-            path?.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
-
-        private static string FormatSeparatorsForUnity(string path) => path?.Replace('\\', '/');
-
-        private static bool isInitialized = false;
-
-        private static readonly Dictionary<string, MixedRealityToolkitModuleType> moduleNameMap = new Dictionary<string, MixedRealityToolkitModuleType>()
-        {
-            { "Core", MixedRealityToolkitModuleType.Core },
-            { "Generated", MixedRealityToolkitModuleType.Generated },
-            { "Providers", MixedRealityToolkitModuleType.Providers },
-            { "Services", MixedRealityToolkitModuleType.Services },
-            { "SDK", MixedRealityToolkitModuleType.SDK },
-            { "Examples", MixedRealityToolkitModuleType.Examples },
-            { "Tests", MixedRealityToolkitModuleType.Tests },
-            { "Extensions", MixedRealityToolkitModuleType.Extensions },
-            { "Tools", MixedRealityToolkitModuleType.Tools },
-
-            // This module only exists for testing purposes, and is used in edit mode tests in conjunction
-            // with MixedRealityToolkitFiles to ensure that this class is able to reason over MRTK
-            // files that are placed outside of the root asset folder.
-            { "AdhocTesting", MixedRealityToolkitModuleType.AdhocTesting },
-        };
+        private readonly static Task searchForFoldersTask;
 
         /// <summary>
-        /// Maps an absolute path to be relative to the Project Root path (the Unity folder that contains Assets)
-        /// </summary>
-        /// <param name="absolutePath">The absolute path to the project.</param>
-        /// <returns>The project relative path.</returns>
-        /// <remarks>This doesn't produce paths that contain step out '..' relative paths.</remarks>
-        public static string GetAssetDatabasePath(string absolutePath) => FormatSeparatorsForUnity(absolutePath)?.Replace(Application.dataPath, "Assets");
-
-        /// <summary>
-        /// Returns a collection of MRTK Core directories found in the project.
+        /// Resolves the given asset to its full path if and only if the asset belongs to the
+        /// Assets folder (i.e. it is prefixed with "Assets/..."
         /// </summary>
         /// <remarks>
-        /// File/Folder paths returned are absolute, not relative
+        /// If not associated with the Assets folder, will return the path unchanged.
         /// </remarks>
+        private static string ResolveFullAssetsPath(string path)
+        {
+            if (path.StartsWith("Assets"))
+            {
+                // asset.Substring(6) represents the characters after the "Assets" string.
+                return Application.dataPath + path.Substring(6);
+            }
+            return path;
+        }
+
+        /// <summary>
+        /// Returns a collection of MRTK directories found in the project.
+        /// </summary>
         public static IEnumerable<string> MRTKDirectories => GetDirectories(MixedRealityToolkitModuleType.Core);
 
-        /// <summary>
-        /// Get list of discovered directories for provided module type
-        /// </summary>
-        /// <param name="module">Module type to filter against</param>
-        /// <returns>string list of discovered directory paths</returns>
-        /// <remarks>
-        /// File/Folder paths returned are absolute, not relative
-        /// </remarks>
         public static IEnumerable<string> GetDirectories(MixedRealityToolkitModuleType module)
         {
             if (mrtkFolders.TryGetValue(module, out HashSet<string> folders))
@@ -162,68 +131,123 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
         /// <summary>
         /// Are any of the MRTK directories available?
         /// </summary>
-        /// <remarks>
-        /// If a search is currently in progress, then property will wait synchronously for the task to finish with timeout of 1 second
-        /// </remarks>
         public static bool AreFoldersAvailable
         {
             get
             {
-                // Other components that InitializeOnLoad may be called before our static constructor. If that is the case, initialize now
-                if (!isInitialized)
-                {
-                    Init();
-                }
-
-                // If we are currently searching for folders, wait up to 1 second for operation to complete
-                if (searchForFoldersTask != null)
-                {
-                    searchForFoldersTask.Wait(1000);
-                }
-
+                searchForFoldersTask.Wait();
                 return mrtkFolders.Count > 0;
             }
         }
 
-        static MixedRealityToolkitFiles()
-        {
-            Init();
-        }
-
-        private static void Init()
-        {
-            if (!isInitialized)
-            {
-                RefreshFolders();
-            }
-
-            isInitialized = true;
-        }
-
         /// <summary>
-        /// Force refresh of MRTK tracked folders. Fires and forgets async call. Returns immediately
+        /// Directory levels to search for MRTK folders below the root directory.
         /// </summary>
         /// <remarks>
-        /// Kicks off async refresh of the MRTK folder database.
+        /// E.g. with level 3 and folders ROOT/A/B/C/D would search A and B and C, but not D.
         /// </remarks>
-        public static void RefreshFolders()
+        public const int DirectorySearchDepth = 3;
+
+        static MixedRealityToolkitFiles()
         {
             string path = Application.dataPath;
             searchForFoldersTask = Task.Run(() => SearchForFoldersAsync(path));
         }
 
-        /// <summary>
-        /// Get task tracking folder refresh if component wants to wait for files to be ready
-        /// </summary>
-        public static async Task WaitForFolderRefresh()
+        private static void SearchForFoldersAsync(string rootPath)
         {
-            await searchForFoldersTask;
+            Stack<IEnumerator<string>> dirIters = new Stack<IEnumerator<string>>(DirectorySearchDepth);
+
+            dirIters.Push(Directory.EnumerateDirectories(rootPath).GetEnumerator());
+
+            while (dirIters.Count > 0)
+            {
+                IEnumerator<string> iter = dirIters.Peek();
+                if (iter.MoveNext())
+                {
+                    TryRegisterModuleFolder(iter.Current);
+
+                    if (dirIters.Count < DirectorySearchDepth)
+                    {
+                        dirIters.Push(Directory.EnumerateDirectories(iter.Current).GetEnumerator());
+                    }
+                }
+                else
+                {
+                    dirIters.Pop();
+                }
+            }
         }
 
+        private static void TryRegisterModuleFolder(string folder)
+        {
+            string normalizedFolder = NormalizeSeparators(folder);
+            List<MixedRealityToolkitModuleType> modules;
+            if (FindMatchingModule(normalizedFolder, out modules))
+            {
+                foreach (var module in modules)
+                {
+                    if (!mrtkFolders.TryGetValue(module, out HashSet<string> modFolders))
+                    {
+                        modFolders = new HashSet<string>();
+                        mrtkFolders.Add(module, modFolders);
+                    }
+                    modFolders.Add(normalizedFolder);
+                }
+            }
+        }
+
+        private static void TryRegisterModuleFile(string fullAssetPath)
+        {
+            MixedRealityToolkitModuleType moduleType = MatchModuleType(fullAssetPath);
+            if (moduleType != MixedRealityToolkitModuleType.None)
+            {
+                if (!mrtkFolders.TryGetValue(moduleType, out HashSet<string> modFolders))
+                {
+                    modFolders = new HashSet<string>();
+                    mrtkFolders.Add(moduleType, modFolders);
+                }
+
+                string folder = Path.GetDirectoryName(fullAssetPath);
+                modFolders.Add(NormalizeSeparators(folder));
+            }
+        }
+
+        private static bool TryUnregisterModuleFolder(string folder)
+        {
+            string normalizedFolder = NormalizeSeparators(folder);
+            bool found = false;
+            foreach (var modFolders in mrtkFolders)
+            {
+                if (modFolders.Value.Remove(normalizedFolder))
+                {
+                    if (modFolders.Value.Count == 0)
+                    {
+                        mrtkFolders.Remove(modFolders.Key);
+                    }
+                    found = true;
+                }
+            }
+
+            return found;
+        }
+
+        private static string NormalizeSeparators(string path) => path.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
+
+        private static string FormatSeparatorsForUnity(string path) => path.Replace('\\', '/');
+
         /// <summary>
-        /// Returns files from all folder instances of the core MRTK folder relative path.
+        /// Maps an absolute path to be relative to the Project Root path (the Unity folder that contains Assets)
         /// </summary>
-        /// <param name="mrtkRelativeFolder">The core MRTK folder relative path to the target folder.</param>
+        /// <param name="absolutePath">The absolute path to the project.</param>
+        /// <returns>The project relative path.</returns>
+        /// <remarks>This doesn't produce paths that contain step out '..' relative paths.</remarks>
+        public static string GetAssetDatabasePath(string absolutePath) => FormatSeparatorsForUnity(absolutePath).Replace(Application.dataPath, "Assets");
+
+        /// <summary>
+        /// Returns files from all folder instances of the MRTK folder relative path.
+        /// </summary>
+        /// <param name="mrtkRelativeFolder">The MRTK folder relative path to the target folder.</param>
         /// <returns>The array of files.</returns>
         public static string[] GetFiles(string mrtkRelativeFolder)
         {
@@ -239,7 +263,7 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
         {
             if (!AreFoldersAvailable)
             {
-                Debug.LogWarning("Failed to locate MixedRealityToolkit folders in the project.");
+                Debug.LogError("Failed to locate MixedRealityToolkit folders in the project.");
                 return null;
             }
 
@@ -256,9 +280,9 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
         }
 
         /// <summary>
-        /// Maps a single relative path file to a concrete path from one of the core MRTK folders, if found. Otherwise returns null.
+        /// Maps a single relative path file to a concrete path from one of the MRTK folders, if found. Otherwise returns null.
         /// </summary>
-        /// <param name="mrtkPathToFile">The core MRTK folder relative path to the file.</param>
+        /// <param name="mrtkPathToFile">The MRTK folder relative path to the file.</param>
         /// <returns>The project relative path to the file.</returns>
         public static string MapRelativeFilePath(string mrtkPathToFile)
         {
@@ -307,24 +331,36 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
         /// <summary>
         /// Similar to MapRelativeFilePathToAbsolutePath, except this checks for the existence of a folder instead of file.
         /// </summary>
-        /// <remarks>
-        /// Returns first valid path found
-        /// </remarks>
         public static string MapRelativeFolderPathToAbsolutePath(MixedRealityToolkitModuleType module, string mrtkPathToFolder)
         {
             return MapRelativePathToAbsolutePath(SearchType.Folder, module, mrtkPathToFolder);
         }
 
-        /// <summary>
-        /// Get the relative asset folder path to the provided Module type
-        /// </summary>
-        /// <param name="module">Module type to search for</param>
-        /// <remarks>
-        /// Returns first valid module folder path (relative) found
-        /// </remarks>
         public static string MapModulePath(MixedRealityToolkitModuleType module)
         {
             return GetAssetDatabasePath(MapRelativeFolderPathToAbsolutePath(module, ""));
+        }
+
+        /// <summary>
+        /// Maps a single relative path (file or folder) in MRTK folders to its absolute path, if found.
+        /// Otherwise returns null.
+        /// </summary>
+        private static string MapRelativePathToAbsolutePath(SearchType searchType, MixedRealityToolkitModuleType module, string mrtkPath)
+        {
+            if (!AreFoldersAvailable)
+            {
+                Debug.LogError("Failed to locate MixedRealityToolkit folders in the project.");
+                return null;
+            }
+
+            if (mrtkFolders.TryGetValue(module, out HashSet<string> modFolders))
+            {
+                string path = modFolders
+                    .Select(t => Path.Combine(t, mrtkPath))
+                    .FirstOrDefault(t => searchType == SearchType.File ? File.Exists(t) : Directory.Exists(t));
+                return path;
+            }
+            return null;
         }
 
         /// <summary>
@@ -344,162 +380,69 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
             }
 
             int separatorIndex = packageFolder.IndexOf('.');
-            packageFolder = (separatorIndex != -1) ? packageFolder.Substring(separatorIndex + 1) : "Core";
+            packageFolder = (separatorIndex != -1) ? packageFolder.Substring(separatorIndex+1) : "Core";
 
             MixedRealityToolkitModuleType moduleType;
-            return moduleNameMap.TryGetValue(packageFolder, out moduleType) ? moduleType : MixedRealityToolkitModuleType.None;
+            return moduleNameMap.TryGetValue(packageFolder, out moduleType) ? moduleType: MixedRealityToolkitModuleType.None;
         }
+
+        private static readonly Dictionary<string, MixedRealityToolkitModuleType> moduleNameMap = new Dictionary<string, MixedRealityToolkitModuleType>()
+        {
+            { "Core", MixedRealityToolkitModuleType.Core },
+            { "Generated", MixedRealityToolkitModuleType.Generated },
+            { "Providers", MixedRealityToolkitModuleType.Providers },
+            { "Services", MixedRealityToolkitModuleType.Services },
+            { "SDK", MixedRealityToolkitModuleType.SDK },
+            { "Examples", MixedRealityToolkitModuleType.Examples },
+            { "Tests", MixedRealityToolkitModuleType.Tests },
+            { "Extensions", MixedRealityToolkitModuleType.Extensions },
+            { "Tools", MixedRealityToolkitModuleType.Tools },
+
+            // This module only exists for testing purposes, and is used in edit mode tests in conjunction
+            // with MixedRealityToolkitFiles to ensure that this class is able to reason over MRTK
+            // files that are placed outside of the root asset folder.
+            { "AdhocTesting", MixedRealityToolkitModuleType.AdhocTesting },
+        };
 
         /// <summary>
-        /// Creates the MixedRealityToolkit.Generated folder if it does not exist and returns the 
-        /// path to the generated folder.
+        /// Try to find the matching modules associated with path by looking for the presence of
+        /// MRTK sentinel files.
         /// </summary>
-        public static string GetGeneratedFolder
+        /// <remarks>
+        /// In certain consumption situations, the content can be placed within the same folder,
+        /// meaning it's possible for multiple sentinel values to exist within the same folder.
+        /// </remarks>
+        public static bool FindMatchingModule(string path, out List<MixedRealityToolkitModuleType> result)
         {
-            get
+            result = null;
+            
+            if (path.Length > 0)
             {
-                TryToCreateGeneratedFolder();
-                return MapModulePath(MixedRealityToolkitModuleType.Generated);
-            }
-        }
-
-        private static async Task SearchForFoldersAsync(string rootPath)
-        {
-            if (searchForFoldersToken != null)
-            {
-                searchForFoldersToken.Cancel();
-            }
-
-            searchForFoldersToken = new CancellationTokenSource();
-            await Task.Run(() => SearchForFolders(rootPath, searchForFoldersToken.Token), searchForFoldersToken.Token);
-            searchForFoldersToken = null;
-        }
-
-        private static void SearchForFolders(string rootPath, CancellationToken ct)
-        {
-            try
-            {
-                var filePathResults = Directory.GetFiles(rootPath, SentinelFilePattern, SearchOption.AllDirectories);
-                foreach (var sentinelFilePath in filePathResults)
+                // Note that path can be a file or a directory
+                DirectoryInfo directoryInfo = new DirectoryInfo(path);
+                var sentinelFiles = Directory.EnumerateFiles(directoryInfo.FullName, SentinelFilePattern);
+                foreach (var sentinelFile in sentinelFiles)
                 {
-                    TryRegisterModuleViaFile(sentinelFilePath);
-
-                    if (ct.IsCancellationRequested)
+                    if (result == null)
                     {
-                        ct.ThrowIfCancellationRequested();
+                        result = new List<MixedRealityToolkitModuleType>();
+                    }
+                    MixedRealityToolkitModuleType moduleType = MatchModuleType(sentinelFile);
+                    if (moduleType != MixedRealityToolkitModuleType.None)
+                    {
+                        result.Add(moduleType);
                     }
                 }
-
-                // Create the Generated folder, if the user tries to delete the Generated folder it will be created again
-                TryToCreateGeneratedFolder();
-            }
-            catch (OperationCanceledException)
-            {
-                Console.WriteLine($"\n{nameof(OperationCanceledException)} thrown\n");
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError(ex.Message);
-            }
-        }
-
-        private static void TryRegisterModuleViaFile(string filePath)
-        {
-            MixedRealityToolkitModuleType moduleType = GetModuleType(filePath);
-            if (moduleType != MixedRealityToolkitModuleType.None)
-            {
-                string folderPath = Path.GetDirectoryName(filePath);
-
-                RegisterFolderToModule(folderPath, moduleType);
-            }
-        }
-
-        private static void RegisterFolderToModule(string folderPath, MixedRealityToolkitModuleType module)
-        {
-            string normalizedFolder = NormalizeSeparators(folderPath);
-            if (!mrtkFolders.TryGetValue(module, out HashSet<string> modFolders))
-            {
-                modFolders = new HashSet<string>();
-                mrtkFolders.Add(module, modFolders);
             }
 
-            modFolders.Add(normalizedFolder);
-        }
-
-        private static void TryToCreateGeneratedFolder()
-        {
-            // Always add the the MixedRealityToolkit.Generated folder to Assets
-            var generatedDirs = GetDirectories(MixedRealityToolkitModuleType.Generated);
-            if (generatedDirs == null || !generatedDirs.Any())
-            {
-                string generatedFolderPath = Path.Combine("Assets", "MixedRealityToolkit.Generated");
-                if (!Directory.Exists(generatedFolderPath))
-                {
-                    Directory.CreateDirectory(generatedFolderPath);
-                }
-
-                string generatedSentinelFilePath = Path.Combine(generatedFolderPath, "MRTK.Generated.sentinel");
-                if (!File.Exists(generatedSentinelFilePath))
-                {
-                    // Make sure we create and dispose/close the filestream just created
-                    using (var f = File.Create(generatedSentinelFilePath)) { }
-                }
-
-                TryRegisterModuleViaFile(generatedSentinelFilePath);
-            }
-        }
-
-        private static bool TryUnregisterModuleFolder(string folderPath)
-        {
-            string normalizedFolder = NormalizeSeparators(folderPath);
-            bool found = false;
-            var removeKeys = new HashSet<MixedRealityToolkitModuleType>();
-            foreach (var modFolders in mrtkFolders)
-            {
-                if (modFolders.Value.Remove(normalizedFolder))
-                {
-                    if (modFolders.Value.Count == 0)
-                    {
-                        removeKeys.Add(modFolders.Key);
-                    }
-                    found = true;
-                }
-            }
-
-            foreach (var key in removeKeys)
-            {
-                mrtkFolders.Remove(key);
-            }
-
-            return found;
+            return result != null;
         }
 
         /// <summary>
-        /// Maps a single relative path (file or folder) in MRTK folders to its absolute path, if found.
-        /// Otherwise returns null.
+        /// Given the full file path, returns the module it's associated with (if it is an MRTK
+        /// sentinel file).
         /// </summary>
-        private static string MapRelativePathToAbsolutePath(SearchType searchType, MixedRealityToolkitModuleType module, string mrtkPath)
-        {
-            if (!AreFoldersAvailable)
-            {
-                Debug.LogWarning("Failed to locate MixedRealityToolkit folders in the project.");
-                return null;
-            }
-
-            if (mrtkFolders.TryGetValue(module, out HashSet<string> modFolders))
-            {
-                string path = modFolders
-                    .Select(t => Path.Combine(t, mrtkPath))
-                    .FirstOrDefault(t => searchType == SearchType.File ? File.Exists(t) : Directory.Exists(t));
-                return path;
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Given the full file path, returns the module it's associated with (if it is an MRTK sentinel file)
-        /// </summary>
-        private static MixedRealityToolkitModuleType GetModuleType(string filePath)
+        private static MixedRealityToolkitModuleType MatchModuleType(string filePath)
         {
             const string sentinelRegexPattern = @"^MRTK\.(?<module>[a-zA-Z]+)\.sentinel";
             string fileName = Path.GetFileName(filePath);
@@ -516,26 +459,15 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
             return MixedRealityToolkitModuleType.None;
         }
 
-        private static bool IsSentinelFile(string assetPath)
-        {
-            return Regex.IsMatch(Path.GetFileName(assetPath), SentinelFilePattern);
-        }
-
         /// <summary>
-        /// Resolves the given asset to its full path if and only if the asset belongs to the
-        /// Assets folder (i.e. it is prefixed with "Assets/..."
+        /// This function is only exposed for testing purposes, and can change/be removed at any time.
         /// </summary>
         /// <remarks>
-        /// If not associated with the Assets folder, will return the path unchanged.
+        /// Synchronously refreshes the MRTK folder database.
         /// </remarks>
-        private static string ResolveFullAssetsPath(string path)
+        public static void RefreshFolders()
         {
-            if (path.StartsWith("Assets"))
-            {
-                // asset.Substring(6) represents the characters after the "Assets" string.
-                return Application.dataPath + path.Substring(6);
-            }
-            return path;
+            SearchForFoldersAsync(Application.dataPath);
         }
     }
 }

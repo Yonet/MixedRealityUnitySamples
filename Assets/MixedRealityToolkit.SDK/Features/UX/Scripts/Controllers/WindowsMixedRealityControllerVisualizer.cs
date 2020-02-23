@@ -6,7 +6,6 @@ using UnityEngine;
 
 namespace Microsoft.MixedReality.Toolkit.Input
 {
-    [AddComponentMenu("Scripts/MRTK/SDK/WindowsMixedRealityControllerVisualizer")]
     public class WindowsMixedRealityControllerVisualizer : MixedRealityControllerVisualizer
     {
         private readonly Quaternion inverseRotation = Quaternion.Euler(0f, 180f, 0f);

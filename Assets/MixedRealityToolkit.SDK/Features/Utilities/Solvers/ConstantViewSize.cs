@@ -8,7 +8,6 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Solvers
     /// <summary>
     /// ConstantViewSize solver scales to maintain a constant size relative to the view (currently tied to the Camera)
     /// </summary>
-    [AddComponentMenu("Scripts/MRTK/SDK/ConstantViewSize")]
     public class ConstantViewSize : Solver
     {
         #region ConstantViewSize Parameters

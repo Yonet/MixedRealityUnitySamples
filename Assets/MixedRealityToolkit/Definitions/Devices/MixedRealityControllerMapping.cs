@@ -140,79 +140,43 @@ namespace Microsoft.MixedReality.Toolkit.Input
 
         internal bool UpdateInteractionSettingsFromDefault()
         {
-            if (interactions == null || interactions.Length == 0) { return false; }
-
-            MixedRealityInteractionMapping[] newDefaultInteractions = GetDefaultInteractionMappings();
-
-            if (newDefaultInteractions == null)
-            {
-                return false;
-            }
-
-            if (interactions.Length != newDefaultInteractions.Length)
-            {
-                interactions = CreateNewMatchedMapping(interactions, newDefaultInteractions);
-                return true;
-            }
-
             bool updatedMappings = false;
 
-            for (int i = 0; i < newDefaultInteractions.Length; i++)
+            if (interactions?.Length > 0)
             {
-                MixedRealityInteractionMapping currentMapping = interactions[i];
-                MixedRealityInteractionMapping currentDefaultMapping = newDefaultInteractions[i];
+                MixedRealityInteractionMapping[] newDefaultInteractions = GetDefaultInteractionMappings();
 
-                if (Equals(currentMapping, currentDefaultMapping))
+                if (newDefaultInteractions == null)
                 {
-                    interactions[i] = new MixedRealityInteractionMapping(currentDefaultMapping)
-                    {
-                        MixedRealityInputAction = currentMapping.MixedRealityInputAction
-                    };
+                    return updatedMappings;
+                }
 
-                    updatedMappings = true;
+                for (int i = 0; i < newDefaultInteractions.Length; i++)
+                {
+                    MixedRealityInteractionMapping currentMapping = interactions[i];
+                    MixedRealityInteractionMapping currentDefaultMapping = newDefaultInteractions[i];
+
+                    if (currentMapping.Id != currentDefaultMapping.Id ||
+                        currentMapping.Description != currentDefaultMapping.Description ||
+                        currentMapping.AxisType != currentDefaultMapping.AxisType ||
+                        currentMapping.InputType != currentDefaultMapping.InputType ||
+                        currentMapping.KeyCode != currentDefaultMapping.KeyCode ||
+                        currentMapping.AxisCodeX != currentDefaultMapping.AxisCodeX ||
+                        currentMapping.AxisCodeY != currentDefaultMapping.AxisCodeY ||
+                        currentMapping.InvertXAxis != currentDefaultMapping.InvertXAxis ||
+                        currentMapping.InvertYAxis != currentDefaultMapping.InvertYAxis)
+                    {
+                        interactions[i] = new MixedRealityInteractionMapping(currentDefaultMapping)
+                        {
+                            MixedRealityInputAction = currentMapping.MixedRealityInputAction
+                        };
+
+                        updatedMappings = true;
+                    }
                 }
             }
 
             return updatedMappings;
-        }
-
-        private MixedRealityInteractionMapping[] CreateNewMatchedMapping(MixedRealityInteractionMapping[] interactions, MixedRealityInteractionMapping[] newDefaultInteractions)
-        {
-            MixedRealityInteractionMapping[] newDefaultMapping = new MixedRealityInteractionMapping[newDefaultInteractions.Length];
-
-            for (int i = 0; i < newDefaultInteractions.Length; i++)
-            {
-                for (int j = 0; j < interactions.Length; j++)
-                {
-                    if (Equals(interactions[j], newDefaultInteractions[i]))
-                    {
-                        newDefaultMapping[i] = new MixedRealityInteractionMapping(newDefaultInteractions[i])
-                        {
-                            MixedRealityInputAction = interactions[j].MixedRealityInputAction
-                        };
-                        break;
-                    }
-                }
-
-                if (newDefaultMapping[i] == null)
-                {
-                    newDefaultMapping[i] = new MixedRealityInteractionMapping(newDefaultInteractions[i]);
-                }
-            }
-
-            return newDefaultMapping;
-        }
-
-        private bool Equals(MixedRealityInteractionMapping a, MixedRealityInteractionMapping b)
-        {
-            return !(a.Description != b.Description ||
-                        a.AxisType != b.AxisType ||
-                        a.InputType != b.InputType ||
-                        a.KeyCode != b.KeyCode ||
-                        a.AxisCodeX != b.AxisCodeX ||
-                        a.AxisCodeY != b.AxisCodeY ||
-                        a.InvertXAxis != b.InvertXAxis ||
-                        a.InvertYAxis != b.InvertYAxis);
         }
 
         private MixedRealityInteractionMapping[] GetDefaultInteractionMappings()
@@ -234,7 +198,7 @@ namespace Microsoft.MixedReality.Toolkit.Input
         }
 
         /// <summary>
-        /// Synchronizes the input actions of the same physical controller of a different concrete type.
+        /// Synchronizes the Input Actions of the same physical controller of a different concrete type.
         /// </summary>
         internal void SynchronizeInputActions(MixedRealityInteractionMapping[] otherControllerMapping)
         {

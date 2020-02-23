@@ -15,8 +15,7 @@ namespace Microsoft.MixedReality.Toolkit.Extensions.SceneTransitions
         SupportedPlatforms.LinuxStandalone | SupportedPlatforms.WindowsUniversal,
         "Scene Transition Service",
         "SceneTransitionService/Profiles/DefaultSceneTransitionServiceProfile.asset",
-        "MixedRealityToolkit.Extensions",
-        true)]
+        "MixedRealityToolkit.Extensions")]
     [HelpURL("https://microsoft.github.io/MixedRealityToolkit-Unity/Documentation/Extensions/SceneTransitionService/SceneTransitionServiceOverview.html")]
     public class SceneTransitionService : BaseExtensionService, ISceneTransitionService, IMixedRealityExtensionService
     {

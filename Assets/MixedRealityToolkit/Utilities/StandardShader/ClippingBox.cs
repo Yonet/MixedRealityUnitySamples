@@ -10,7 +10,6 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
     /// per pixel based clipping.
     /// </summary>
     [ExecuteInEditMode]
-    [AddComponentMenu("Scripts/MRTK/Core/ClippingBox")]
     public class ClippingBox : ClippingPrimitive
     {
         private int clipBoxSizeID;

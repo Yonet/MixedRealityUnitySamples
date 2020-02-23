@@ -9,7 +9,6 @@ using UnityEngine;
 
 namespace Microsoft.MixedReality.Toolkit.Teleport
 {
-    [AddComponentMenu("Scripts/MRTK/SDK/TeleportCursor")]
     public class TeleportCursor : AnimatedCursor, IMixedRealityTeleportHandler
     {
         [SerializeField]

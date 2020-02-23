@@ -50,7 +50,6 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
             ".mat",
             ".anim",
             ".controller",
-            ".playable",
         };
 
         private readonly string[] assetsWithMetaDependencies =
@@ -333,6 +332,7 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
                 }
 
                 string guid = GetGuidFromMeta(metaFile);
+
                 if (!IsGuidValid(guid))
                 {
                     continue;
@@ -411,8 +411,7 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
 
         private static bool IsGuidValid(string guid)
         {
-            return !string.IsNullOrEmpty(guid) && guid != nullGuid
-            && !string.IsNullOrEmpty(Path.GetExtension(AssetDatabase.GUIDToAssetPath(guid)));
+            return !string.IsNullOrEmpty(guid) && guid != nullGuid;
         }
 
         private static string GetGuidFromMeta(string file)

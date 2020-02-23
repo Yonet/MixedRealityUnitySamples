@@ -14,4 +14,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isCustomProfile: 0
   renderFromPVCameraForMixedRealityCapture: 0
-  reprojectionMethod: 0

@@ -34,7 +34,7 @@ The branches in this repo is following the [HoloLens 2 Unity Tutorial](https://d
 ### Lesson 3:
 ### Lesson 4:
 ### Lesson 5:
-![Lesson 5 Bing Maps SDK](Assets/Images/mapSDK.png)
+<!-- ![Lesson 5 Bing Maps SDK](Assets/Images/mapSDK.png) -->
 ### Lesson 6:
 ### Lesson 7:
 

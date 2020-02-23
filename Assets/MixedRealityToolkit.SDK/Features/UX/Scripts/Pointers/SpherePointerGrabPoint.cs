@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace Microsoft.MixedReality.Toolkit.Input
 {
-    [AddComponentMenu("Scripts/MRTK/SDK/SpherePointerGrabPoint")]
     public class SpherePointerGrabPoint : MonoBehaviour
     {
         [SerializeField]

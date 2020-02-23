@@ -274,7 +274,7 @@ namespace Microsoft.MixedReality.Toolkit.Input
                     RecordingService.UseBufferTimeLimit = newUseTimeLimit;
                 }
 
-                using (new EditorGUI.DisabledGroupScope(!RecordingService.UseBufferTimeLimit))
+                using (new GUIEnabledWrapper(RecordingService.UseBufferTimeLimit))
                 {
                     float newTimeLimit = EditorGUILayout.FloatField(RecordingService.RecordingBufferTimeLimit);
                     if (newTimeLimit != RecordingService.RecordingBufferTimeLimit)
@@ -324,7 +324,7 @@ namespace Microsoft.MixedReality.Toolkit.Input
                 }
             }
 
-            using (new EditorGUI.DisabledGroupScope(PlaybackService == null))
+            using (new GUIEnabledWrapper(PlaybackService != null))
             {
                 bool wasPlaying = PlaybackService.IsPlaying;
 

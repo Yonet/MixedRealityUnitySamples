@@ -9,7 +9,6 @@ namespace Microsoft.MixedReality.Toolkit.Diagnostics
     /// <summary>
     /// Class that listens for and acts upon diagnostic system voice commands.
     /// </summary>
-    [AddComponentMenu("Scripts/MRTK/Services/DiagnosticsSystemVoiceControls")]
     public class DiagnosticsSystemVoiceControls : MonoBehaviour, IMixedRealitySpeechHandler
     {
         bool registeredForInput = false;

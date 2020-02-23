@@ -11,7 +11,6 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Solvers
     /// <summary>
     /// SurfaceMagnetism casts rays to Surfaces in the world and aligns the object to the hit surface.
     /// </summary>
-    [AddComponentMenu("Scripts/MRTK/SDK/SurfaceMagnetism")]
     public class SurfaceMagnetism : Solver
     {
         #region Enums

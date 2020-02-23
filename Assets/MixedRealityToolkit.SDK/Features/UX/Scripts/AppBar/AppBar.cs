@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using Microsoft.MixedReality.Toolkit.Utilities;
@@ -11,7 +11,6 @@ namespace Microsoft.MixedReality.Toolkit.UI
     /// <summary>
     /// Logic for the App Bar. Generates buttons, manages states.
     /// </summary>
-    [AddComponentMenu("Scripts/MRTK/SDK/AppBar")]
     public class AppBar : MonoBehaviour
     {
         private const float backgroundBarMoveSpeed = 5;
@@ -44,217 +43,7 @@ namespace Microsoft.MixedReality.Toolkit.UI
 
         #endregion
 
-        #region Private Serialized Fields with Public Properties
-
-        [Header("Target Bounding Box")]
-
-        [Tooltip("Object the app bar is controlling - This object must implement the IBoundsTargetProvider.")]
-        [SerializeField]
-        private MonoBehaviour boundingBox = null;
-
-        /// <summary>
-        /// Object the app bar is controlling - This object must implement the IBoundsTargetProvider.
-        /// </summary>
-        public MonoBehaviour Target
-        {
-            get { return boundingBox; }
-            set { boundingBox = value; }
-        }
-
-        [Tooltip("The parent game object for the renderable objects in the app bar")]
-        [SerializeField]
-        private GameObject baseRenderer = null;
-
-        /// <summary>
-        /// The parent game object for the renderable objects in the AppBar
-        /// </summary>
-        public GameObject BaseRenderer
-        {
-            get => baseRenderer;
-            set => baseRenderer = value;
-        }
-
-        [Tooltip("The parent transform for the button collection")]
-        [SerializeField]
-        private Transform buttonParent = null;
-
-        /// <summary>
-        /// The parent transform for the button collection
-        /// </summary>
-        public Transform ButtonParent
-        {
-            get => buttonParent;
-            set => buttonParent = value;
-        }
-
-        [Tooltip("The background gameobject, scales to fill area behind buttons")]
-        [SerializeField]
-        private GameObject backgroundBar = null;
-
-        /// <summary>
-        /// The background gameobject, scales to fill area behind buttons
-        /// </summary>
-        public GameObject BackgroundBar
-        {
-            get => backgroundBar;
-            set => backgroundBar = value;
-        }
-        
-        [Header("States")]
-
-        [Tooltip("The AppBar's display type; default is Manipulation")]
-        [SerializeField]
-        private AppBarDisplayTypeEnum displayType = AppBarDisplayTypeEnum.Manipulation;
-
-        /// <summary>
-        /// The AppBar's display type; default is Manipulation
-        /// </summary>
-        public AppBarDisplayTypeEnum DisplayType
-        {
-            get { return displayType; }
-            set { displayType = value; }
-        }
-
-        [Tooltip("The AppBar's current state")]
-        [SerializeField]
-        private AppBarStateEnum state = AppBarStateEnum.Default;
-
-        /// <summary>
-        /// The AppBar's current state
-        /// </summary>
-        public AppBarStateEnum State
-        {
-            get { return state; }
-            set { state = value; }
-        }
-
-
-        [Header("Default Button Options")]
-
-        [Tooltip("Should the AppBar have a remove button")]
-        [SerializeField]
-        private bool useRemove = true;
-
-        /// <summary>
-        /// Should the AppBar have a remove button
-        /// </summary>
-        public bool UseRemove
-        {
-            get { return useRemove; }
-            set { useRemove = value; }
-        }
-
-        [Tooltip("Should the AppBar have an adjust button")]
-        [SerializeField]
-        private bool useAdjust = true;
-
-        /// <summary>
-        /// Should the AppBar have an adjust button
-        /// </summary>
-        public bool UseAdjust
-        {
-            get { return useAdjust; }
-            set { useAdjust = value; }
-        }
-
-        [Tooltip("Should the AppBar have a hide button")]
-        [SerializeField]
-        private bool useHide = true;
-
-        /// <summary>
-        /// Should the AppBar have a hide button
-        /// </summary>
-        public bool UseHide
-        {
-            get { return useHide; }
-            set { useHide = value; }
-        }
-
-        [Header("Default Button Icons")]
-
-        [Tooltip("The adjust button texture")]
-        [SerializeField]
-        private Texture adjustIcon = null;
-
-        /// <summary>
-        /// The adjust button texture
-        /// </summary>
-        public Texture AdjustIcon
-        {
-            get => adjustIcon;
-            set => adjustIcon = value;
-        }
-
-        [Tooltip("The done button texture")]
-        [SerializeField]
-        private Texture doneIcon = null;
-
-        /// <summary>
-        /// The done button texture
-        /// </summary>
-        public Texture DoneIcon
-        {
-            get => doneIcon;
-            set => doneIcon = value;
-        }
-
-        [Tooltip("The hide button texture")]
-        [SerializeField]
-        private Texture hideIcon = null;
-
-        /// <summary>
-        /// The hide button texture
-        /// </summary>
-        public Texture HideIcon
-        {
-            get => hideIcon;
-            set => hideIcon = value;
-        }
-
-        [Tooltip("The Remove button texture")]
-        [SerializeField]
-        private Texture removeIcon = null;
-
-        /// <summary>
-        /// The remove button texture
-        /// </summary>
-        public Texture RemoveIcon
-        {
-            get => removeIcon;
-            set => removeIcon = value;
-        }
-
-        [Tooltip("The show button texture")]
-        [SerializeField]
-        private Texture showIcon = null;
-
-        /// <summary>
-        /// The show button texture
-        /// </summary>
-        public Texture ShowIcon
-        {
-            get => showIcon;
-            set => showIcon = value;
-        }
-
-        [Header("Scale & Position Options")]
-
-        [SerializeField]
-        [Tooltip("Uses an alternate follow style that works better for very oblong objects.")]
-        private bool useTightFollow = false;
-
-        /// <summary>
-        /// Uses an alternate follow style that works better for very oblong objects
-        /// </summary>
-        public bool UseTightFollow
-        {
-            get { return useTightFollow; }
-            set { useTightFollow = value; }
-        }
-
-        [SerializeField]
-        [Tooltip("Where to display the app bar on the y axis. This can be set to negative values to force the app bar to appear below the object.")]
-        private float hoverOffsetYScale = 0.25f;
+        #region Public properties
 
         /// <summary>
         /// Where to display the app bar on the y axis
@@ -267,10 +56,6 @@ namespace Microsoft.MixedReality.Toolkit.UI
             set { hoverOffsetYScale = value; }
         }
 
-        [SerializeField]
-        [Tooltip("Pushes the app bar away from the object.")]
-        private float hoverOffsetZ = 0f;
-
         /// <summary>
         /// Pushes the app bar away from the object
         /// </summary>
@@ -280,31 +65,113 @@ namespace Microsoft.MixedReality.Toolkit.UI
             set { hoverOffsetZ = value; }
         }
 
-        [Tooltip("The button width for each button")]
+        /// <summary>
+        /// Uses an alternate follow style that works better for very oblong objects
+        /// </summary>
+        public bool UseTightFollow
+        {
+            get { return useTightFollow; }
+            set { useTightFollow = value; }
+        }
+
+        public AppBarDisplayTypeEnum DisplayType
+        {
+            get { return displayType; }
+            set { displayType = value; }
+        }
+
+        public AppBarStateEnum State
+        {
+            get { return state; }
+            set { state = value; }
+        }
+
+        public bool UseRemove
+        {
+            get { return useRemove; }
+            set { useRemove = value; }
+        }
+
+        public bool UseAdjust
+        {
+            get { return useAdjust; }
+            set { useAdjust = value; }
+        }
+
+        public bool UseHide
+        {
+            get { return useHide; }
+            set { useHide = value; }
+        }
+
+        #endregion
+
+        #region Private Serialized Fields
+
+        [Header("Target Bounding Box")]
+        [SerializeField]
+        private BoundingBox boundingBox = null;
+
+        [SerializeField]
+        private GameObject baseRenderer = null;
+
+        [SerializeField]
+        private Transform buttonParent = null;
+
+        [SerializeField]
+        private GameObject backgroundBar = null;
+               
+        [Header("States")]
+        [SerializeField]
+        private AppBarDisplayTypeEnum displayType = AppBarDisplayTypeEnum.Manipulation;
+
+        [SerializeField]
+        private AppBarStateEnum state = AppBarStateEnum.Default;
+
+        [Header("Default Button Options")]
+        [SerializeField]
+        private bool useRemove = true;
+
+        [SerializeField]
+        private bool useAdjust = true;
+
+        [SerializeField]
+        private bool useHide = true;
+
+        [Header("Default Button Icons")]
+        [SerializeField]
+        private Texture adjustIcon = null;
+
+        [SerializeField]
+        private Texture doneIcon = null;
+
+        [SerializeField]
+        private Texture hideIcon = null;
+
+        [SerializeField]
+        private Texture removeIcon = null;
+
+        [SerializeField]
+        private Texture showIcon = null;
+
+        [Header("Scale & Position Options")]
+        [SerializeField]
+        [Tooltip("Uses an alternate follow style that works better for very oblong objects.")]
+        private bool useTightFollow = false;
+
+        [SerializeField]
+        [Tooltip("Where to display the app bar on the y axis. This can be set to negative values to force the app bar to appear below the object.")]
+        private float hoverOffsetYScale = 0.25f;
+
+        [SerializeField]
+        [Tooltip("Pushes the app bar away from the object.")]
+        private float hoverOffsetZ = 0f;
+
         [SerializeField]
         private float buttonWidth = 0.032f;
 
-        /// <summary>
-        /// The button width for each button
-        /// </summary>
-        public float ButtonWidth
-        {
-            get => buttonWidth;
-            set => buttonWidth = value;
-        }
-
-        [Tooltip("The button depth for each button")]
         [SerializeField]
         private float buttonDepth = 0.016f;
-
-        /// <summary>
-        /// The button depth for each button
-        /// </summary>
-        public float ButtonDepth
-        {
-            get => buttonDepth;
-            set => buttonDepth = value;
-        }
 
         #endregion
 
@@ -331,11 +198,11 @@ namespace Microsoft.MixedReality.Toolkit.UI
 
         public void Reset()
         {
-            State = AppBarStateEnum.Default;
-            FollowTargetObject(false);
+            state = AppBarStateEnum.Default;
+            FollowBoundingBox(false);
             lastTimeTapped = Time.time + coolDownTime;
         }
-
+               
         public void OnButtonPressed(AppBarButton button)
         {
             if (Time.time < lastTimeTapped + coolDownTime)
@@ -350,19 +217,19 @@ namespace Microsoft.MixedReality.Toolkit.UI
                     break;
 
                 case ButtonTypeEnum.Adjust:
-                    State = AppBarStateEnum.Manipulation;
+                    state = AppBarStateEnum.Manipulation;
                     break;
 
                 case ButtonTypeEnum.Hide:
-                    State = AppBarStateEnum.Hidden;
+                    state = AppBarStateEnum.Hidden;
                     break;
 
                 case ButtonTypeEnum.Show:
-                    State = AppBarStateEnum.Default;
+                    state = AppBarStateEnum.Default;
                     break;
 
                 case ButtonTypeEnum.Done:
-                    State = AppBarStateEnum.Default;
+                    state = AppBarStateEnum.Default;
                     break;
 
                 default:
@@ -373,12 +240,8 @@ namespace Microsoft.MixedReality.Toolkit.UI
         protected virtual void OnClickRemove()
         {
             // Set the app bar and bounding box to inactive
-            var boundsProvider = Target as IBoundsTargetProvider;
-            if (boundsProvider != null)
-            {
-                boundsProvider.Target.SetActive(false);
-            }
-            Target.gameObject.SetActive(false);
+            boundingBox.Target.SetActive(false);
+            boundingBox.gameObject.SetActive(false);
             gameObject.SetActive(false);
         }
 
@@ -386,12 +249,12 @@ namespace Microsoft.MixedReality.Toolkit.UI
         {
             buttons.Clear();
 
-            foreach (Transform child in ButtonParent)
+            foreach (Transform child in buttonParent)
             {
                 AppBarButton appBarButton = child.GetComponent<AppBarButton>();
                 if (appBarButton == null)
                     throw new Exception("Found a transform without an AppBarButton component under buttonTransforms!");
-
+                
                 appBarButton.InitializeButtonContent(this);
                 // Set to invisible initially if not custom
                 switch (appBarButton.ButtonType)
@@ -411,8 +274,8 @@ namespace Microsoft.MixedReality.Toolkit.UI
         private void UpdateAppBar()
         {
             UpdateButtons();
-            UpdateTargetObject();
-            FollowTargetObject(true);
+            UpdateBoundingBox();
+            FollowBoundingBox(true);
         }
 
         private void UpdateButtons()
@@ -445,8 +308,8 @@ namespace Microsoft.MixedReality.Toolkit.UI
             buttons.Sort(delegate (AppBarButton b1, AppBarButton b2) { return b2.DisplayOrder.CompareTo(b1.DisplayOrder); });
 
             // Use active button number to determine background size and offset
-            float backgroundBarSize = ButtonWidth * activeButtonNum;
-            Vector3 positionOffset = Vector3.right * ((backgroundBarSize / 2) - (ButtonWidth / 2));
+            float backgroundBarSize = buttonWidth * activeButtonNum;
+            Vector3 positionOffset = Vector3.right * ((backgroundBarSize / 2) - (buttonWidth / 2));
 
             // Go through them again, setting active as
             activeButtonNum = 0;
@@ -454,7 +317,7 @@ namespace Microsoft.MixedReality.Toolkit.UI
             {
                 // Set the sibling index and target position so the button will behave predictably when set visible
                 buttons[i].transform.SetSiblingIndex(i);
-                buttons[i].SetTargetPosition((Vector3.left * ButtonWidth * activeButtonNum) + positionOffset);
+                buttons[i].SetTargetPosition((Vector3.left * buttonWidth * activeButtonNum) + positionOffset);
 
                 if (!buttons[i].Visible)
                     continue;
@@ -463,50 +326,48 @@ namespace Microsoft.MixedReality.Toolkit.UI
             }
 
             targetBarSize.x = backgroundBarSize;
-            BackgroundBar.transform.localScale = Vector3.Lerp(BackgroundBar.transform.localScale, targetBarSize, Time.deltaTime * backgroundBarMoveSpeed);
-            BackgroundBar.transform.localPosition = Vector3.forward * ButtonDepth / 2;
+            backgroundBar.transform.localScale = Vector3.Lerp(backgroundBar.transform.localScale, targetBarSize, Time.deltaTime * backgroundBarMoveSpeed);
+            backgroundBar.transform.localPosition = Vector3.forward * buttonDepth / 2;
         }
 
-        private void UpdateTargetObject()
+        private void UpdateBoundingBox()
         {
-            var boundsProvider = Target as IBoundsTargetProvider;
-            if (boundsProvider == null || boundsProvider.Target == null)
+            if (boundingBox == null || boundingBox.Target == null)
             {
-                if (DisplayType == AppBarDisplayTypeEnum.Manipulation)
+                if (displayType == AppBarDisplayTypeEnum.Manipulation)
                 {
                     // Hide our buttons
-                    BaseRenderer.SetActive(false);
+                    baseRenderer.SetActive(false);
                 }
                 else
                 {
-                    BaseRenderer.SetActive(true);
+                    baseRenderer.SetActive(true);
                 }
                 return;
             }
 
-            // Target can't be updated in editor mode
+            // BoundingBox can't update in editor mode
             if (!Application.isPlaying)
                 return;
 
-            if (boundsProvider == null)
+            if (boundingBox == null)
                 return;
 
-            switch (State)
+            switch (state)
             {
                 case AppBarStateEnum.Manipulation:
-                    boundsProvider.Active = true;
+                    boundingBox.Active = true;
                     break;
 
                 default:
-                    boundsProvider.Active = false;
+                    boundingBox.Active = false;
                     break;
             }
         }
 
-        private void FollowTargetObject(bool smooth)
+        private void FollowBoundingBox(bool smooth)
         {
-            var boundsProvider = Target as IBoundsTargetProvider;
-            if (boundsProvider == null)
+            if (boundingBox == null)
                 return;
 
             //calculate best follow position for AppBar
@@ -514,7 +375,7 @@ namespace Microsoft.MixedReality.Toolkit.UI
             Vector3 headPosition = CameraCache.Main.transform.position;
             boundsPoints.Clear();
 
-            helper.UpdateNonAABoundsCornerPositions(boundsProvider.TargetBounds, boundsPoints);
+            helper.UpdateNonAABoundingBoxCornerPositions(boundingBox, boundsPoints);
             int followingFaceIndex = helper.GetIndexOfForwardFace(headPosition);
             Vector3 faceNormal = helper.GetFaceNormal(followingFaceIndex);
 
@@ -525,7 +386,7 @@ namespace Microsoft.MixedReality.Toolkit.UI
             transform.position = smooth ? Vector3.Lerp(transform.position, finalPosition, Time.deltaTime * backgroundBarMoveSpeed) : finalPosition;
 
             // Rotate on the y axis
-            Vector3 direction = (boundsProvider.TargetBounds.bounds.center - finalPosition).normalized;
+            Vector3 direction = (boundingBox.TargetBounds.bounds.center - finalPosition).normalized;
             if (direction != Vector3.zero)
             {
                 Vector3 eulerAngles = Quaternion.LookRotation(direction, Vector3.up).eulerAngles;
@@ -548,22 +409,22 @@ namespace Microsoft.MixedReality.Toolkit.UI
                     break;
 
                 case ButtonTypeEnum.Remove:
-                    if (!UseRemove)
+                    if (!useRemove)
                         return false;
                     break;
 
                 case ButtonTypeEnum.Hide:
-                    if (!UseHide)
+                    if (!useHide)
                         return false;
                     break;
 
                 case ButtonTypeEnum.Adjust:
-                    if (!UseAdjust)
+                    if (!useAdjust)
                         return false;
                     break;
             }
 
-            switch (State)
+            switch (state)
             {
                 case AppBarStateEnum.Default:
                 default:
@@ -614,31 +475,31 @@ namespace Microsoft.MixedReality.Toolkit.UI
             {
                 case ButtonTypeEnum.Show:
                     buttonText = "Show";
-                    buttonIcon = ShowIcon;
+                    buttonIcon = showIcon;
                     displayOrder = 0;
                     break;
 
                 case ButtonTypeEnum.Hide:
                     buttonText = "Hide";
-                    buttonIcon = HideIcon;
+                    buttonIcon = hideIcon;
                     displayOrder = 1;
                     break;
 
                 case ButtonTypeEnum.Adjust:
                     buttonText = "Adjust";
-                    buttonIcon = AdjustIcon;
+                    buttonIcon = adjustIcon;
                     displayOrder = 2;
                     break;
 
                 case ButtonTypeEnum.Remove:
                     buttonText = "Remove";
-                    buttonIcon = RemoveIcon;
+                    buttonIcon = removeIcon;
                     displayOrder = 3;
                     break;
 
                 case ButtonTypeEnum.Done:
                     buttonText = "Done";
-                    buttonIcon = DoneIcon;
+                    buttonIcon = doneIcon;
                     displayOrder = 4;
                     break;
 

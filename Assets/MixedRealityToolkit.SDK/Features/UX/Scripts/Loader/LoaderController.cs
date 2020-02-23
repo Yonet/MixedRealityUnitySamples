@@ -11,7 +11,6 @@ namespace Microsoft.MixedReality.Toolkit.UI
     /// <remarks>
     /// This loader is calculated dynamically based on Sine and Cosine
     /// </remarks>
-    [AddComponentMenu("Scripts/MRTK/SDK/LoaderController")]
     public class LoaderController : MonoBehaviour
     {
 

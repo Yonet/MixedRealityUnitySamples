@@ -6,7 +6,6 @@ using UnityEngine;
 
 namespace Microsoft.MixedReality.Toolkit.Experimental.SurfacePulse
 {
-	[AddComponentMenu("Scripts/MRTK/SDK/SurfacePulse")]
 	public class SurfacePulse : MonoBehaviour
 	{
 		[Tooltip("Shader parameter name to drive the pulse radius")]

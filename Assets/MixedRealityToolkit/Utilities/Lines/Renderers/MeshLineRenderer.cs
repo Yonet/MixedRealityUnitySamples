@@ -9,7 +9,6 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
     /// <summary>
     /// Creates instances of a mesh along the line
     /// </summary>
-    [AddComponentMenu("Scripts/MRTK/Core/MeshLineRenderer")]
     public class MeshLineRenderer : BaseMixedRealityLineRenderer
     {
         [Header("Instanced Mesh Settings")]

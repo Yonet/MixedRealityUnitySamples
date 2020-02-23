@@ -69,7 +69,7 @@ namespace Microsoft.MixedReality.Toolkit.Editor.SpatialAwareness
                 return;
             }
 
-            using (new EditorGUI.DisabledGroupScope(IsProfileLock((BaseMixedRealityProfile)target)))
+            using (new GUIEnabledWrapper(!IsProfileLock((BaseMixedRealityProfile)target)))
             {
                 serializedObject.Update();
 

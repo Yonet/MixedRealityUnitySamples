@@ -11,7 +11,6 @@ namespace Microsoft.MixedReality.Toolkit.UI
     /// Maintains that connection even if the target moves
     /// </summary>
     [ExecuteAlways]
-    [AddComponentMenu("Scripts/MRTK/SDK/ToolTipConnector")]
     public class ToolTipConnector : MonoBehaviour
     {
         [SerializeField]

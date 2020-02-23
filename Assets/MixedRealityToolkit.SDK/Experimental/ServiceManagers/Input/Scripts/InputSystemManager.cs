@@ -15,7 +15,6 @@ namespace Microsoft.MixedReality.Toolkit.Experimental.Input
     /// <summary>
     /// Service manager supporting running the input system, without requiring the MixedRealityToolkit object.
     /// </summary>
-    [AddComponentMenu("Scripts/MRTK/SDK/InputSystemManager")]
     public class InputSystemManager : BaseServiceManager
     {
         [SerializeField]

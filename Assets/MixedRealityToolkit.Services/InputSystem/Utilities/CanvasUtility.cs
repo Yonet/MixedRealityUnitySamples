@@ -3,6 +3,7 @@
 
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Microsoft.MixedReality.Toolkit.Input.Utilities
 {
@@ -11,7 +12,6 @@ namespace Microsoft.MixedReality.Toolkit.Input.Utilities
     /// </summary>
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Canvas))]
-    [AddComponentMenu("Scripts/MRTK/Services/CanvasUtility")]
     public class CanvasUtility : MonoBehaviour, IMixedRealityPointerHandler
     {
         private bool oldIsTargetPositionLockedOnFocusLock = false;

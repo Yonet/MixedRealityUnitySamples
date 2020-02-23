@@ -13,7 +13,6 @@ namespace Microsoft.MixedReality.Toolkit.Input
     /// <summary>
     /// Object that represents a cursor in 3D space.
     /// </summary>
-    [AddComponentMenu("Scripts/MRTK/SDK/BaseCursor")]
     public class BaseCursor : MonoBehaviour, IMixedRealityCursor
     {
         public CursorStateEnum CursorState { get; private set; } = CursorStateEnum.None;

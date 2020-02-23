@@ -14,7 +14,6 @@ namespace Microsoft.MixedReality.Toolkit.Audio
     /// Failing to do so will result in the desired effect not being applied to the sound.
     /// </remarks>
     [DisallowMultipleComponent]
-    [AddComponentMenu("Scripts/MRTK/SDK/AudioOccluder")]
     public class AudioOccluder : MonoBehaviour, IAudioInfluencer
     {
         [Tooltip("Frequency above which sound will not be heard after applying occlusion.")]

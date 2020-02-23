@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Microsoft.MixedReality.Toolkit.SpatialAwareness
 {
+
     public partial class BaseSpatialAwarenessObject : IMixedRealitySpatialAwarenessObject
     {
         /// <inheritdoc />
@@ -16,19 +17,18 @@ namespace Microsoft.MixedReality.Toolkit.SpatialAwareness
         /// <inheritdoc />
         public MeshRenderer Renderer { get; set; }
 
-        /// <summary>
-        /// The MeshFilter associated with this spatial object's renderer.
-        /// </summary>
         public MeshFilter Filter { get; set; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual void CleanObject()
         {
             // todo: consider if this should be virtual, and what params it should contain
         }
 
         /// <summary>
-        /// Constructor.
+        /// constructor
         /// </summary>
         protected BaseSpatialAwarenessObject()
         {

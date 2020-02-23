@@ -6,7 +6,6 @@ using UnityEngine;
 
 namespace Microsoft.MixedReality.Toolkit.UI
 {
-    [AddComponentMenu("Scripts/MRTK/SDK/ToggleHandVisualisation")]
     public class ToggleHandVisualisation : MonoBehaviour
     {
         public bool isHandMeshVisible = false;

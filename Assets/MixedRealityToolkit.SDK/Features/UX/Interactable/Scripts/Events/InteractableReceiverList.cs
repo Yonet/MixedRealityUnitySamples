@@ -10,7 +10,6 @@ namespace Microsoft.MixedReality.Toolkit.UI
     /// <summary>
     /// An example of building an Interactable receiver that uses built-in receivers that extend ReceiverBase
     /// </summary>
-    [AddComponentMenu("Scripts/MRTK/SDK/InteractableReceiverList")]
     public class InteractableReceiverList : ReceiverBaseMonoBehavior
     {
         /// <summary>

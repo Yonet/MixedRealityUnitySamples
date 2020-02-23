@@ -1,10 +1,10 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using System;
-
 #if (UNITY_WSA && DOTNETWINRT_PRESENT) || WINDOWS_UWP
+using System;
 using System.Runtime.InteropServices;
+using UnityEngine.XR.WSA;
 #if WINDOWS_UWP
 using Windows.Perception.Spatial;
 #if DOTNETWINRT_PRESENT
@@ -18,19 +18,10 @@ using Microsoft.Windows.Perception.Spatial;
 #endif
 #endif // (UNITY_WSA && DOTNETWINRT_PRESENT) || WINDOWS_UWP
 
-namespace Microsoft.MixedReality.Toolkit.WindowsMixedReality
+namespace Microsoft.MixedReality.Toolkit.WindowsMixedReality.Input
 {
     public static class WindowsMixedRealityUtilities
     {
-        /// <summary>
-        /// The provider that should be used for the corresponding utilities.
-        /// </summary>
-        /// <remarks>
-        /// This is intended to be used to support both XR SDK and Unity's legacy XR pipeline, which provide
-        /// different APIs to access these native objects.
-        /// </remarks>
-        public static IWindowsMixedRealityUtilitiesProvider UtilitiesProvider { get; set; } = null;
-
 #if (UNITY_WSA && DOTNETWINRT_PRESENT) || WINDOWS_UWP
 #if ENABLE_DOTNET
         [DllImport("DotNetNativeWorkaround.dll", EntryPoint = "MarshalIInspectable")]
@@ -43,14 +34,13 @@ namespace Microsoft.MixedReality.Toolkit.WindowsMixedReality
         /// On .NET Native, IInspectable pointers cannot be marshaled from native to managed code using Marshal.GetObjectForIUnknown.
         /// This class calls into a native method that specifically marshals the type as a specific WinRT interface, which
         /// is supported by the marshaller on both .NET Core and .NET Native.
-        /// Please see https://microsoft.github.io/MixedRealityToolkit-Unity/Documentation/Input/HandTracking.html#net-native for more info.
+        /// Please see https://microsoft.github.io/MixedRealityToolkit-Unity/Documentation/InputSystem/HandTracking.html#net-native for more info.
         /// </remarks>
         private static SpatialCoordinateSystem GetSpatialCoordinateSystem(IntPtr nativePtr)
         {
             try
             {
-                SpatialCoordinateSystem coordinateSystem;
-                GetSpatialCoordinateSystem(nativePtr, out coordinateSystem);
+                GetSpatialCoordinateSystem(nativePtr, out SpatialCoordinateSystem coordinateSystem);
                 return coordinateSystem;
             }
             catch
@@ -72,26 +62,20 @@ namespace Microsoft.MixedReality.Toolkit.WindowsMixedReality
         {
             get
             {
-                if (UtilitiesProvider != null)
-                {
-                    IntPtr newSpatialCoordinateSystemPtr = UtilitiesProvider.ISpatialCoordinateSystemPtr;
-                    if (newSpatialCoordinateSystemPtr != currentSpatialCoordinateSystemPtr && newSpatialCoordinateSystemPtr != IntPtr.Zero)
-                    {
 #if ENABLE_DOTNET
-                        spatialCoordinateSystem = GetSpatialCoordinateSystem(newSpatialCoordinateSystemPtr);
+                return spatialCoordinateSystem ?? (spatialCoordinateSystem = GetSpatialCoordinateSystem(WorldManager.GetNativeISpatialCoordinateSystemPtr()));
 #elif WINDOWS_UWP
-                        spatialCoordinateSystem = Marshal.GetObjectForIUnknown(newSpatialCoordinateSystemPtr) as SpatialCoordinateSystem;
+                return spatialCoordinateSystem ?? (spatialCoordinateSystem = Marshal.GetObjectForIUnknown(WorldManager.GetNativeISpatialCoordinateSystemPtr()) as SpatialCoordinateSystem);
 #elif DOTNETWINRT_PRESENT
-                        spatialCoordinateSystem = SpatialCoordinateSystem.FromNativePtr(newSpatialCoordinateSystemPtr);
-#endif
-                        currentSpatialCoordinateSystemPtr = newSpatialCoordinateSystemPtr;
-                    }
+                var spatialCoordinateSystemPtr = WorldManager.GetNativeISpatialCoordinateSystemPtr();
+                if (spatialCoordinateSystem == null && spatialCoordinateSystemPtr != IntPtr.Zero)
+                {
+                    spatialCoordinateSystem = SpatialCoordinateSystem.FromNativePtr(WorldManager.GetNativeISpatialCoordinateSystemPtr());
                 }
                 return spatialCoordinateSystem;
+#endif
             }
         }
-
-        private static IntPtr currentSpatialCoordinateSystemPtr = IntPtr.Zero;
 
         /// <summary>
         /// Access the underlying native current holographic frame.
@@ -104,15 +88,14 @@ namespace Microsoft.MixedReality.Toolkit.WindowsMixedReality
         {
             get
             {
-                if (UtilitiesProvider == null || UtilitiesProvider.IHolographicFramePtr == IntPtr.Zero)
-                {
-                    return null;
-                }
-
 #if DOTNETWINRT_PRESENT
-                return HolographicFrame.FromNativePtr(UtilitiesProvider.IHolographicFramePtr);
+                IntPtr nativePtr = UnityEngine.XR.XRDevice.GetNativePtr();
+                HolographicFrameNativeData hfd = Marshal.PtrToStructure<HolographicFrameNativeData>(nativePtr);
+                return HolographicFrame.FromNativePtr(hfd.IHolographicFramePtr);
 #elif WINDOWS_UWP
-                return Marshal.GetObjectForIUnknown(UtilitiesProvider.IHolographicFramePtr) as HolographicFrame;
+                IntPtr nativePtr = UnityEngine.XR.XRDevice.GetNativePtr();
+                HolographicFrameNativeData hfd = Marshal.PtrToStructure<HolographicFrameNativeData>(nativePtr);
+                return Marshal.GetObjectForIUnknown(hfd.IHolographicFramePtr) as HolographicFrame;
 #else
                 return null;
 #endif
@@ -122,16 +105,14 @@ namespace Microsoft.MixedReality.Toolkit.WindowsMixedReality
         private static SpatialCoordinateSystem spatialCoordinateSystem = null;
 #endif // (UNITY_WSA && DOTNETWINRT_PRESENT) || WINDOWS_UWP
 
-        [Obsolete("Use the System.Numerics.Vector3 extension method ToUnityVector3 instead.")]
         public static UnityEngine.Vector3 SystemVector3ToUnity(System.Numerics.Vector3 vector)
         {
-            return vector.ToUnityVector3();
+            return new UnityEngine.Vector3(vector.X, vector.Y, -vector.Z);
         }
 
-        [Obsolete("Use the System.Numerics.Quaternion extension method ToUnityQuaternion instead.")]
         public static UnityEngine.Quaternion SystemQuaternionToUnity(System.Numerics.Quaternion quaternion)
         {
-            return quaternion.ToUnityQuaternion();
+            return new UnityEngine.Quaternion(-quaternion.X, -quaternion.Y, quaternion.Z, quaternion.W);
         }
     }
 }

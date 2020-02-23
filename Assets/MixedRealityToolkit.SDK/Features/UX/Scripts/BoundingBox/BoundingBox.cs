@@ -20,12 +20,10 @@ namespace Microsoft.MixedReality.Toolkit.UI
     /// of the object. It further provides a proximity effect for scale and rotation handles that alters scaling and material. 
     /// </summary>
     [HelpURL("https://microsoft.github.io/MixedRealityToolkit-Unity/Documentation/README_BoundingBox.html")]
-    [AddComponentMenu("Scripts/MRTK/SDK/BoundingBox")]
     public class BoundingBox : MonoBehaviour,
         IMixedRealitySourceStateHandler,
         IMixedRealityFocusChangedHandler,
-        IMixedRealityFocusHandler,
-        IBoundsTargetProvider
+        IMixedRealityFocusHandler
     {
         #region Enums
 
@@ -174,15 +172,6 @@ namespace Microsoft.MixedReality.Toolkit.UI
 
                 return targetObject;
             }
-
-            set
-            {
-                if (targetObject != value)
-                {
-                    targetObject = value;
-                    CreateRig();
-                }
-            }
         }
 
         [Tooltip("For complex objects, automatic bounds calculation may not behave as expected. Use an existing Box Collider (even on a child object) to manually determine bounds of Bounding Box.")]
@@ -273,9 +262,9 @@ namespace Microsoft.MixedReality.Toolkit.UI
         {
             get
             {
-                if (scaleConstraint != null)
+                if (scaleHandler != null)
                 {
-                    return scaleConstraint.ScaleMinimum;
+                    return scaleHandler.ScaleMinimum;
                 }
                 return 0.0f;
             }
@@ -291,9 +280,9 @@ namespace Microsoft.MixedReality.Toolkit.UI
         {
             get
             {
-                if (scaleConstraint != null)
+                if (scaleHandler != null)
                 {
-                    return scaleConstraint.ScaleMaximum;
+                    return scaleHandler.ScaleMaximum;
                 }
                 return 0.0f;
             }
@@ -822,20 +811,18 @@ namespace Microsoft.MixedReality.Toolkit.UI
         [SerializeField]
         [Tooltip("How far away should the hand be from a handle before it starts scaling the handle?")]
         [Range(0.005f, 0.2f)]
-        private float handleMediumProximity = 0.1f;
         /// <summary>
         /// Distance between handle and hand before proximity scaling will be triggered.
         /// </summary>
-        public float HandleMediumProximity => handleMediumProximity;
+        private float handleMediumProximity = 0.1f;
 
         [SerializeField]
         [Tooltip("How far away should the hand be from a handle before it activates the close-proximity scaling effect?")]
         [Range(0.001f, 0.1f)]
-        private float handleCloseProximity = 0.03f;
         /// <summary>
         /// Distance between handle and hand that will trigger the close proximity effect.
         /// </summary>
-        public float HandleCloseProximity => handleCloseProximity;
+        private float handleCloseProximity = 0.03f;
 
         [SerializeField]
         [Tooltip("A Proximity-enabled Handle scales by this amount when a hand moves out of range. Default is 0, invisible handle.")]
@@ -897,29 +884,26 @@ namespace Microsoft.MixedReality.Toolkit.UI
         [SerializeField]
         [Tooltip("At what rate should a Proximity-scaled Handle scale when the Hand moves from Medium proximity to Far proximity?")]
         [Range(0.0f, 1.0f)]
-        private float farGrowRate = 0.3f;
         /// <summary>
         /// Scaling animation velocity from medium to far proximity state.
         /// </summary>
-        public float FarGrowRate => farGrowRate;
+        private float farGrowRate = 0.3f;
 
         [SerializeField]
         [Tooltip("At what rate should a Proximity-scaled Handle scale when the Hand moves to a distance that activates Medium Scale ?")]
         [Range(0.0f, 1.0f)]
-        private float mediumGrowRate = 0.2f;
         /// <summary>
         /// Scaling animation velocity from far to medium proximity.
         /// </summary>
-        public float MediumGrowRate => mediumGrowRate;
+        private float mediumGrowRate = 0.2f;
 
         [SerializeField]
         [Tooltip("At what rate should a Proximity-scaled Handle scale when the Hand moves to a distance that activates Close Scale ?")]
         [Range(0.0f, 1.0f)]
-        private float closeGrowRate = 0.3f;
         /// <summary>
         /// Scaling animation velocity from medium to close proximity.
         /// </summary>
-        public float CloseGrowRate => closeGrowRate;
+        private float closeGrowRate = 0.3f;
 
         [SerializeField]
         [Tooltip("Add a Collider here if you do not want the handle colliders to interact with another object's collider.")]
@@ -1060,7 +1044,7 @@ namespace Microsoft.MixedReality.Toolkit.UI
         // Current position of the grab point
         private Vector3 currentGrabPoint;
 
-        private MinMaxScaleConstraint scaleConstraint;
+        private TransformScaleHandler scaleHandler;
 
         // Grab point position in pointer space. Used to calculate the current grab point from the current pointer pose.
         private Vector3 grabPointInPointer;
@@ -1385,18 +1369,17 @@ namespace Microsoft.MixedReality.Toolkit.UI
                     float scaleFactor = 1 + (currentDist - initialDist) / initialDist;
 
                     Vector3 newScale = initialScaleOnGrabStart * scaleFactor;
-
-                    MixedRealityTransform clampedTransform = MixedRealityTransform.NewScale(newScale);
-                    if (scaleConstraint != null)
+                    Vector3 clampedScale = newScale;
+                    if (scaleHandler != null)
                     {
-                        scaleConstraint.ApplyConstraint(ref clampedTransform);
-                        if (clampedTransform.Scale != newScale)
+                        clampedScale = scaleHandler.ClampScale(newScale);
+                        if (clampedScale != newScale)
                         {
-                            scaleFactor = clampedTransform.Scale[0] / initialScaleOnGrabStart[0];
+                            scaleFactor = clampedScale[0] / initialScaleOnGrabStart[0];
                         }
                     }
 
-                    Target.transform.localScale = clampedTransform.Scale;
+                    Target.transform.localScale = clampedScale;
                     Target.transform.position = initialPositionOnGrabStart * scaleFactor + (1 - scaleFactor) * oppositeCorner;
                 }
             }
@@ -1930,7 +1913,7 @@ namespace Microsoft.MixedReality.Toolkit.UI
         {
             var rigRootObj = new GameObject(rigRootName);
             rigRoot = rigRootObj.transform;
-            rigRoot.parent = Target.transform;
+            rigRoot.parent = transform;
 
             var pH = rigRootObj.AddComponent<PointerHandler>();
             pH.OnPointerDown.AddListener(OnPointerDown);
@@ -1984,16 +1967,16 @@ namespace Microsoft.MixedReality.Toolkit.UI
             {
                 isChildOfTarget = transform.IsChildOf(target.transform);
 
-                scaleConstraint = GetComponent<MinMaxScaleConstraint>();
-                if (scaleConstraint == null)
+                scaleHandler = GetComponent<TransformScaleHandler>();
+                if (scaleHandler == null)
                 {
-                    scaleConstraint = gameObject.AddComponent<MinMaxScaleConstraint>();
+                    scaleHandler = gameObject.AddComponent<TransformScaleHandler>();
 
-                    scaleConstraint.TargetTransform = Target.transform;
-#pragma warning disable 0618
-                    scaleConstraint.ScaleMinimum = scaleMinimum;
-                    scaleConstraint.ScaleMaximum = scaleMaximum;
-#pragma warning restore 0618
+                    scaleHandler.TargetTransform = Target.transform;
+                #pragma warning disable 0618
+                    scaleHandler.ScaleMinimum = scaleMinimum;
+                    scaleHandler.ScaleMaximum = scaleMaximum;
+                #pragma warning restore 0618
                 }
             }
         }
@@ -2199,7 +2182,7 @@ namespace Microsoft.MixedReality.Toolkit.UI
                 // move rig into position and rotation
                 rigRoot.position = TargetBounds.bounds.center;
                 rigRoot.rotation = Target.transform.rotation;
-                rigRoot.parent = Target.transform;
+                rigRoot.parent = transform;
             }
         }
 

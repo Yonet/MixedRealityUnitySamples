@@ -8,7 +8,6 @@ namespace Microsoft.MixedReality.Toolkit.Input
     /// <summary>
     /// The cursor will display the context specified in this component if it is part of the targeted object
     /// </summary>
-    [AddComponentMenu("Scripts/MRTK/SDK/CursorContextInfo")]
     public class CursorContextInfo : MonoBehaviour
     {
         public enum CursorAction

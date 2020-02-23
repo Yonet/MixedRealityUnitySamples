@@ -6,7 +6,6 @@ using UnityEngine;
 
 namespace Microsoft.MixedReality.Toolkit.Input
 {
-    [AddComponentMenu("Scripts/MRTK/SDK/SpherePointerVisual")]
     public class SpherePointerVisual : MonoBehaviour
     {
         public Transform TetherEndPoint => tetherEndPoint;

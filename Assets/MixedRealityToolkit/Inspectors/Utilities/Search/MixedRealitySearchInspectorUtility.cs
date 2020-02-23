@@ -138,12 +138,12 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor.Search
                                 }
                             }
 
-                            if (MixedRealityProjectPreferences.LockProfiles && !search.IsCustomProfile)
+                            if (MixedRealityPreferences.LockProfiles && !search.IsCustomProfile)
                             {
                                 EditorGUILayout.HelpBox("Clone this profile to edit default properties.", MessageType.Warning);
                             }
 
-                            using (new EditorGUI.DisabledGroupScope(MixedRealityProjectPreferences.LockProfiles && !search.IsCustomProfile))
+                            using (new EditorGUI.DisabledGroupScope(MixedRealityPreferences.LockProfiles && !search.IsCustomProfile))
                             {
                                 using (new EditorGUI.IndentLevelScope(1))
                                 {

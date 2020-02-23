@@ -64,13 +64,9 @@ namespace Microsoft.MixedReality.Toolkit
         [SerializeField]
         private BaseMixedRealityProfile configurationProfile;
 
-        /// <inheritdoc />
-        public BaseMixedRealityProfile Profile => configurationProfile;
-
         /// <summary>
         /// The configuration profile for the service.
         /// </summary>
-        [Obsolete("Use Profile property instead")]
         public BaseMixedRealityProfile ConfigurationProfile => configurationProfile;
     }
 }

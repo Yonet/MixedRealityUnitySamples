@@ -10,7 +10,6 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
     /// per pixel based clipping.
     /// </summary>
     [ExecuteInEditMode]
-    [AddComponentMenu("Scripts/MRTK/Core/ClippingSphere")]
     public class ClippingSphere : ClippingPrimitive
     {
         /// <summary>

@@ -199,7 +199,7 @@ namespace Microsoft.MixedReality.Toolkit.Editor
         /// </summary>
         protected static bool IsProfileLock(BaseMixedRealityProfile profile)
         {
-            return MixedRealityProjectPreferences.LockProfiles && !profile.IsCustomProfile;
+            return MixedRealityPreferences.LockProfiles && !profile.IsCustomProfile;
         }
     }
 }

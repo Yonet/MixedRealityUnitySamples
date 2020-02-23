@@ -9,7 +9,7 @@ namespace Microsoft.MixedReality.Toolkit.WindowsMixedReality
     /// <summary>
     /// A representation of Windows Mixed Reality native data, provided as an IntPtr from Unity's UnityEngine.XR.XRDevice.GetNativePtr().
     /// </summary>
-    /// <remarks>See <see href="https://docs.microsoft.com/windows/mixed-reality/unity-xrdevice-advanced"/> for more info.</remarks>
+    /// <remarks>See <see href="https://docs.microsoft.com/en-us/windows/mixed-reality/unity-xrdevice-advanced"/> for more info.</remarks>
     [StructLayout(LayoutKind.Sequential)]
     public struct HolographicFrameNativeData
     {
@@ -24,12 +24,12 @@ namespace Microsoft.MixedReality.Toolkit.WindowsMixedReality
         public uint MaxNumberOfCameras;
 
         /// <summary>
-        /// The current native root <see href="https://docs.microsoft.com/uwp/api/windows.perception.spatial.spatialcoordinatesystem">ISpatialCoordinateSystem</see>.
+        /// The current native root <see href="https://docs.microsoft.com/uwp/api/windows.perception.spatial.spatialcoordinatesystem">ISpatialCoordinateSystem</see>).
         /// </summary>
         public IntPtr ISpatialCoordinateSystemPtr;
         
         /// <summary>
-        /// The current native <see href="https://docs.microsoft.com/uwp/api/Windows.Graphics.Holographic.HolographicFrame">IHolographicFrame</see>.
+        /// The current native <see href="https://docs.microsoft.com/uwp/api/Windows.Graphics.Holographic.HolographicFrame">IHolographicFrame</see>).
         /// </summary>
         public IntPtr IHolographicFramePtr;
 

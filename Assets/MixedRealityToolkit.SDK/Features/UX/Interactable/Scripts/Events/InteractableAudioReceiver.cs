@@ -11,7 +11,6 @@ namespace Microsoft.MixedReality.Toolkit.UI
     /// <summary>
     /// Add audio clip to play onClick or on Voice Command
     /// </summary>
-    [AddComponentMenu("Scripts/MRTK/SDK/InteractableAudioReceiver")]
     public class InteractableAudioReceiver : ReceiverBase
     {
         /// <summary>

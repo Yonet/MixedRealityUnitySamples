@@ -12,7 +12,6 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
     /// Implements Unity's built in line renderer component, and applies the line data to it.
     /// </summary>
     [RequireComponent(typeof(LineRenderer))]
-    [AddComponentMenu("Scripts/MRTK/Core/MixedRealityLineRenderer")]
     public class MixedRealityLineRenderer : BaseMixedRealityLineRenderer
     {
         [Header("Mixed Reality Line Renderer Settings")]
@@ -23,8 +22,8 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
 
         public Material LineMaterial
         {
-            get => lineMaterial;
-            set => lineMaterial = value;
+            get { return lineMaterial; }
+            set { lineMaterial = value; }
         }
 
         [SerializeField]
@@ -32,8 +31,8 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
 
         public bool RoundedEdges
         {
-            get => roundedEdges;
-            set => roundedEdges = value;
+            get { return roundedEdges; }
+            set { roundedEdges = value; }
         }
 
         [SerializeField]
@@ -41,8 +40,8 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
 
         public bool RoundedCaps
         {
-            get => roundedCaps;
-            set => roundedCaps = value;
+            get { return roundedCaps; }
+            set { roundedCaps = value; }
         }
 
         [SerializeField]
@@ -50,25 +49,25 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
         private bool fadeLineBrightnessOnEnable = true;
 
         /// <summary>
-        /// Sets whether the ray line will animate to a lower brightness level on enable of this component
+        /// Sets whether the ray line will animate to a lower brightness level after a hand/controller is recognized
         /// </summary>
         public bool FadeLineBrightnessOnEnable
         {
-            get => fadeLineBrightnessOnEnable;
-            set => fadeLineBrightnessOnEnable = value;
+            get { return fadeLineBrightnessOnEnable; }
+            set { fadeLineBrightnessOnEnable = value; }
         }
 
         [SerializeField, Range(0f, 1f)]
-        [Tooltip("The amount the pointer line will fade if FadeLineBrightnessOnEnable is true.")]
+        [Tooltip("The amount the pointer line will fade if fadeLineBrightnessOnEnable is true.")]
         private float fadeLinePercentage = 0.55f;
 
         /// <summary>
-        /// The amount the pointer line will fade if FadeLineBrightnessOnEnable is true"
+        /// The amount the pointer line will fade if fadeLineBrightnessOnEnable is true"
         /// </summary>
         public float FadeLinePercentage
         {
-            get => fadeLinePercentage;
-            set => fadeLinePercentage = value;
+            get { return fadeLinePercentage; }
+            set { fadeLinePercentage = value; }
         }
 
         [SerializeField]
@@ -80,8 +79,8 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
         /// </summary>
         public float FadeLineAnimationTime
         {
-            get => fadeLineAnimationTime;
-            set => fadeLineAnimationTime = value;
+            get { return fadeLineAnimationTime; }
+            set { fadeLineAnimationTime = value; }
         }
 
         [SerializeField]
@@ -107,9 +106,9 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
         {
             lineRenderer = gameObject.EnsureComponent<LineRenderer>();
 
-            if (LineMaterial == null)
+            if (lineMaterial == null)
             {
-                LineMaterial = lineRenderer.sharedMaterial;
+                lineMaterial = lineRenderer.sharedMaterial;
             }
 
             // mafinc - Start the line renderer off disabled (invisible), we'll enable it
@@ -119,16 +118,13 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
                 lineRenderer.enabled = false;
             }
 
-            if (LineMaterial == null)
+            if (lineMaterial == null)
             {
                 Debug.LogError("MixedRealityLineRenderer needs a material.");
                 enabled = false;
             }
 
-            if (FadeLineBrightnessOnEnable && Application.isPlaying)
-            {
-                fadeLine = StartCoroutine(FadeLine(FadeLinePercentage, FadeLineAnimationTime));
-            }
+            fadeLine = StartCoroutine(FadeLine(fadeLinePercentage, fadeLineAnimationTime));
         }
 
         private void OnDisable()

@@ -11,7 +11,6 @@ namespace Microsoft.MixedReality.Toolkit.UI
     /// <summary>
     /// A way to control a list of radial type buttons or tabs
     /// </summary>
-    [AddComponentMenu("Scripts/MRTK/SDK/InteractableToggleCollection")]
     public class InteractableToggleCollection : MonoBehaviour
     {
         [Tooltip("Array of Interactables that will be managed by this controller")]

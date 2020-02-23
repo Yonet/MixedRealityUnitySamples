@@ -12,8 +12,7 @@ namespace Microsoft.MixedReality.Toolkit.UI
     /// </summary>
     public class InteractableScaleTheme : InteractableThemeBase
     {
-        protected Vector3 originalScale;
-        protected Transform hostTransform;
+        private Transform hostTransform;
 
         public InteractableScaleTheme()
         {
@@ -37,16 +36,7 @@ namespace Microsoft.MixedReality.Toolkit.UI
                         Default = new ThemePropertyValue() { Vector3 = Vector3.one}
                     },
                 },
-                CustomProperties = new List<ThemeProperty>()
-                {
-                    new ThemeProperty()
-                    {
-                        Name = "Relative Scale",
-                        Tooltip = "Should the scale be relative to initial Gameobject scale, or absolute",
-                        Type = ThemePropertyTypes.Bool,
-                        Value = new ThemePropertyValue() { Bool = false }
-                    },
-                },
+                CustomProperties = new List<ThemeProperty>(),
             };
         }
 
@@ -56,7 +46,6 @@ namespace Microsoft.MixedReality.Toolkit.UI
             base.Init(host, settings);
 
             hostTransform = Host.transform;
-            originalScale = hostTransform.localScale;
         }
 
         /// <inheritdoc />
@@ -70,15 +59,7 @@ namespace Microsoft.MixedReality.Toolkit.UI
         /// <inheritdoc />
         public override void SetValue(ThemeStateProperty property, int index, float percentage)
         {
-            Vector3 lerpTarget = property.Values[index].Vector3;
-
-            bool relative = Properties[0].Value.Bool;
-            if (relative)
-            {
-                lerpTarget = Vector3.Scale(originalScale, lerpTarget);
-            }
-
-            hostTransform.localScale = Vector3.Lerp(property.StartValue.Vector3, lerpTarget, percentage);
+            hostTransform.localScale = Vector3.Lerp(property.StartValue.Vector3, property.Values[index].Vector3, percentage);
         }
     }
 }

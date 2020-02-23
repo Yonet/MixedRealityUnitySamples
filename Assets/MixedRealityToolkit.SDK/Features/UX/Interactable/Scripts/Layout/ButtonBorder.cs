@@ -11,7 +11,6 @@ namespace Microsoft.MixedReality.Toolkit.UI
     /// Works best when using with ButtonSize, but not required - See ButtonSize for more info.
     /// </summary>
     [ExecuteInEditMode]
-    [AddComponentMenu("Scripts/MRTK/SDK/ButtonBorder")]
     public class ButtonBorder : MonoBehaviour
     {
         /// <summary>

@@ -41,15 +41,7 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Gltf.Serialization
 
         internal static Color GetColorValue(this float[] colorArray)
         {
-            if (colorArray != null && (colorArray.Length == 3 || colorArray.Length == 4))
-            {
-                return new Color(colorArray[0], colorArray[1], colorArray[2], colorArray.Length < 4 ? 1f : colorArray[3]);
-            }
-            else
-            {
-                Debug.LogWarning($"GetColorValue() - Invalid color array of size {colorArray?.Length}");
-                return Color.black;
-            }
+            return new Color(colorArray[0], colorArray[1], colorArray[2], colorArray.Length < 4 ? 1f : colorArray[3]);
         }
 
         internal static float[] SetColorValue(this Color color)
@@ -59,15 +51,7 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Gltf.Serialization
 
         internal static Vector2 GetVector2Value(this float[] vector2Array)
         {
-            if (vector2Array != null && vector2Array.Length == 2)
-            {
-                return new Vector2(vector2Array[0], vector2Array[1]);
-            }
-            else
-            {
-                Debug.LogWarning($"GetVector2Value() - Invalid Vector2 array of size {vector2Array?.Length}");
-                return Vector2.zero;
-            }
+            return new Vector2(vector2Array[0], vector2Array[1]);
         }
 
         internal static float[] SetVector2Value(this Vector2 vector)
@@ -77,16 +61,8 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Gltf.Serialization
 
         internal static Vector3 GetVector3Value(this float[] vector3Array, bool convert = true)
         {
-            if (vector3Array != null && vector3Array.Length == 3)
-            {
-                var vector = new Vector3(vector3Array[0], vector3Array[1], vector3Array[2]);
-                return convert ? Vector3.Scale(vector, CoordinateSpaceConversionScale) : vector;
-            }
-            else
-            {
-                Debug.LogWarning($"GetVector3Value() - Invalid Vector3 array of size {vector3Array?.Length}");
-                return Vector3.zero;
-            }
+            var vector = new Vector3(vector3Array[0], vector3Array[1], vector3Array[2]);
+            return convert ? Vector3.Scale(vector, CoordinateSpaceConversionScale) : vector;
         }
 
         internal static float[] SetVector3Value(this Vector3 vector, bool convert = true)
@@ -101,22 +77,14 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Gltf.Serialization
 
         internal static Quaternion GetQuaternionValue(this float[] quaternionArray, bool convert = true)
         {
-            if (quaternionArray != null && quaternionArray.Length == 4)
-            {
-                var axes = new Vector3(quaternionArray[0], quaternionArray[1], quaternionArray[2]);
+            var axes = new Vector3(quaternionArray[0], quaternionArray[1], quaternionArray[2]);
 
-                if (convert)
-                {
-                    axes = Vector3.Scale(axes, CoordinateSpaceConversionScale) * -1.0f;
-                }
-
-                return new Quaternion(axes.x, axes.y, axes.z, quaternionArray[3]);
-            }
-            else
+            if (convert)
             {
-                Debug.LogWarning($"GetQuaternionValue() - Invalid Quaternion array of size {quaternionArray?.Length}");
-                return Quaternion.identity;
+                axes = Vector3.Scale(axes, CoordinateSpaceConversionScale) * -1.0f;
             }
+
+            return new Quaternion(axes.x, axes.y, axes.z, quaternionArray[3]);
         }
 
         internal static float[] SetQuaternionValue(this Quaternion quaternion, bool convert = true)
@@ -134,21 +102,13 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Gltf.Serialization
 
         internal static Matrix4x4 GetMatrix4X4Value(this double[] matrixArray)
         {
-            if (matrixArray != null && matrixArray.Length == 16)
-            {
-                var matrix = new Matrix4x4(
+            var matrix = new Matrix4x4(
                 new Vector4((float)matrixArray[0], (float)matrixArray[1], (float)matrixArray[2], (float)matrixArray[3]),
                 new Vector4((float)matrixArray[4], (float)matrixArray[5], (float)matrixArray[6], (float)matrixArray[7]),
                 new Vector4((float)matrixArray[8], (float)matrixArray[9], (float)matrixArray[10], (float)matrixArray[11]),
                 new Vector4((float)matrixArray[12], (float)matrixArray[13], (float)matrixArray[14], (float)matrixArray[15]));
-                Matrix4x4 convert = Matrix4x4.Scale(CoordinateSpaceConversionScale);
-                return convert * matrix * convert;
-            }
-            else
-            {
-                Debug.LogWarning($"GetMatrix4X4Value() - Invalid matrix array of size {matrixArray?.Length}");
-                return Matrix4x4.identity;
-            }
+            Matrix4x4 convert = Matrix4x4.Scale(CoordinateSpaceConversionScale);
+            return convert * matrix * convert;
         }
 
         internal static float[] SetMatrix4X4Value(this Matrix4x4 matrix)

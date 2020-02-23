@@ -18,7 +18,6 @@ namespace Microsoft.MixedReality.Toolkit.Audio
     /// </remarks>
     [RequireComponent(typeof(AudioSource))]
     [DisallowMultipleComponent]
-    [AddComponentMenu("Scripts/MRTK/SDK/AudioInfluencerController")]
     public class AudioInfluencerController : MonoBehaviour
     {
         /// <summary>

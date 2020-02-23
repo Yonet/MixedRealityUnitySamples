@@ -77,7 +77,7 @@ namespace Microsoft.MixedReality.Toolkit.Boundary.Editor
                 return;
             }
 
-            using (new EditorGUI.DisabledGroupScope(IsProfileLock((BaseMixedRealityProfile)target)))
+            using (new GUIEnabledWrapper(!IsProfileLock((BaseMixedRealityProfile)target)))
             {
                 serializedObject.Update();
 

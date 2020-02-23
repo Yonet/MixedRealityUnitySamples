@@ -9,7 +9,6 @@ namespace Microsoft.MixedReality.Toolkit.UI
     /// <summary>
     /// The Billboard class implements the behaviors needed to keep a GameObject oriented towards the user.
     /// </summary>
-    [AddComponentMenu("Scripts/MRTK/SDK/Billboard")]
     public class Billboard : MonoBehaviour
     {
         /// <summary>

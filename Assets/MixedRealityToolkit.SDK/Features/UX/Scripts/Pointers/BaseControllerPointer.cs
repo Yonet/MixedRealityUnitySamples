@@ -166,9 +166,9 @@ namespace Microsoft.MixedReality.Toolkit.Input
 
         protected override void OnDisable()
         {
-            if (IsSelectPressed)
+            if (IsSelectPressed && CoreServices.InputSystem != null)
             {
-                CoreServices.InputSystem?.RaisePointerUp(this, pointerAction, Handedness);
+                CoreServices.InputSystem.RaisePointerUp(this, pointerAction, Handedness);
             }
 
             base.OnDisable();
@@ -188,7 +188,7 @@ namespace Microsoft.MixedReality.Toolkit.Input
             if (isCursorInstantiatedFromPrefab)
             {
                 // Manually reset base cursor before destroying it
-                BaseCursor?.Destroy();
+                BaseCursor.Destroy();
                 DestroyCursorInstance();
                 isCursorInstantiatedFromPrefab = false;
             }
@@ -201,14 +201,14 @@ namespace Microsoft.MixedReality.Toolkit.Input
         /// <inheritdoc />
         public override IMixedRealityController Controller
         {
-            get => base.Controller;
+            get { return base.Controller; }
             set
             {
                 base.Controller = value;
 
                 if (base.Controller != null && this != null)
                 {
-                    PointerName = gameObject.name;
+                    pointerName = gameObject.name;
                     InputSourceParent = base.Controller.InputSource;
                 }
             }
@@ -235,7 +235,7 @@ namespace Microsoft.MixedReality.Toolkit.Input
         /// <inheritdoc />
         public string PointerName
         {
-            get => pointerName;
+            get { return pointerName; }
             set
             {
                 pointerName = value;
@@ -284,8 +284,8 @@ namespace Microsoft.MixedReality.Toolkit.Input
             }
         }
 
-        /// <inheritdoc />
         public virtual bool IsActive { get; set; }
+
 
         /// <inheritdoc />
         public bool IsFocusLocked { get; set; }
@@ -336,8 +336,8 @@ namespace Microsoft.MixedReality.Toolkit.Input
         /// </summary>
         public float DefaultPointerExtent
         {
-            get => Mathf.Min(defaultPointerExtent, PointerExtent);
-            set => defaultPointerExtent = value;
+            get { return Mathf.Min(defaultPointerExtent, PointerExtent); }
+            set { defaultPointerExtent = value; }
         }
 
         /// <inheritdoc />
@@ -367,8 +367,8 @@ namespace Microsoft.MixedReality.Toolkit.Input
         /// <inheritdoc />
         public float SphereCastRadius
         {
-            get => sphereCastRadius;
-            set => sphereCastRadius = value;
+            get { return sphereCastRadius; }
+            set { sphereCastRadius = value; }
         }
 
         /// <inheritdoc />
@@ -389,16 +389,8 @@ namespace Microsoft.MixedReality.Toolkit.Input
             }
         }
 
-        /// <inheritdoc />
+        ///  <inheritdoc />
         public virtual void OnPreCurrentPointerTargetChange() { }
-
-        /// <inheritdoc />
-        public virtual void Reset()
-        {
-            Controller = null;
-            IsActive = false;
-            IsFocusLocked = false;
-        }
 
         #endregion IMixedRealityPointer Implementation
 

@@ -29,7 +29,7 @@ namespace Microsoft.MixedReality.Toolkit.Inspectors
                 return;
             }
 
-            using (new EditorGUI.DisabledGroupScope(IsProfileLock((BaseMixedRealityProfile)target)))
+            using (new GUIEnabledWrapper(!IsProfileLock((BaseMixedRealityProfile)target)))
             {
                 serializedObject.Update();
                 EditorGUILayout.PropertyField(smoothEyeTracking);

@@ -19,7 +19,6 @@ namespace Microsoft.MixedReality.Toolkit.UI
     /// </summary>
     [System.Serializable]
     [HelpURL("https://microsoft.github.io/MixedRealityToolkit-Unity/Documentation/README_Interactable.html")]
-    [AddComponentMenu("Scripts/MRTK/SDK/Interactable")]
     public class Interactable :
         MonoBehaviour,
         IMixedRealityFocusChangedHandler,
@@ -479,6 +478,7 @@ namespace Microsoft.MixedReality.Toolkit.UI
 
         /// <summary>
         /// State that corresponds to Gesture reaching max threshold or limits
+        /// Currently not controlled by Interactable directly
         /// </summary>
         public virtual bool HasGestureMax
         {
@@ -488,6 +488,7 @@ namespace Microsoft.MixedReality.Toolkit.UI
 
         /// <summary>
         /// State that corresponds to Interactable is touching another object 
+        /// Currently not controlled by Interactable directly
         /// </summary>
         public virtual bool HasCollision
         {
@@ -652,7 +653,6 @@ namespace Microsoft.MixedReality.Toolkit.UI
                 if (rollOffTimer >= rollOffTime)
                 {
                     HasPress = false;
-                    HasGesture = false;
                 }
             }
 
@@ -1089,29 +1089,38 @@ namespace Microsoft.MixedReality.Toolkit.UI
         /// </summary>
         protected virtual bool ShouldListenToUpDownEvent(InputEventData data)
         {
-            if ((HasFocus || IsGlobal) && data.MixedRealityInputAction == InputAction)
+            if (!(HasFocus || IsGlobal))
             {
-                // Special case: Make sure that we are not being focused only by a PokePointer, since PokePointer
-                // dispatches touch events and should not be dispatching button presses like select, grip, menu, etc.
-                int focusingPointerCount = 0;
-                int focusingPokePointerCount = 0;
-                for (int i = 0; i < focusingPointers.Count; i++)
-                {
-                    if (focusingPointers[i].InputSourceParent.SourceId == data.SourceId)
-                    {
-                        focusingPointerCount++;
-                        if (focusingPointers[i] is PokePointer)
-                        {
-                            focusingPokePointerCount++;
-                        }
-                    }
-                }
-
-                bool onlyFocusedByPokePointer = focusingPointerCount > 0 && focusingPointerCount == focusingPokePointerCount;
-                return !onlyFocusedByPokePointer;
+                return false;
             }
 
-            return false;
+            if (data.MixedRealityInputAction != InputAction)
+            {
+                return false;
+            }
+
+            // Special case: Make sure that we are not being focused only by a PokePointer, since PokePointer
+            // dispatches touch events and should not be dispatching button presses like select, grip, menu, etc.
+            int focusingPointerCount = 0;
+            int focusingPokePointerCount = 0;
+            for (int i = 0; i < focusingPointers.Count; i++)
+            {
+                if (focusingPointers[i].InputSourceParent.SourceId == data.SourceId)
+                {
+                    focusingPointerCount++;
+                    if (focusingPointers[i] is PokePointer)
+                    {
+                        focusingPokePointerCount++;
+                    }
+                }
+            }
+
+            if (focusingPointerCount > 0 && focusingPointerCount == focusingPokePointerCount)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -1149,11 +1158,6 @@ namespace Microsoft.MixedReality.Toolkit.UI
         /// </summary>
         public void TriggerOnClick()
         {
-            if (!IsEnabled)
-            {
-                return;
-            }
-
             IncreaseDimension();
 
             SendOnClick(null);
@@ -1296,22 +1300,27 @@ namespace Microsoft.MixedReality.Toolkit.UI
 
         private bool ShouldListenToMoveEvent<T>(InputEventData<T> eventData)
         {
-            if ((HasFocus || IsGlobal) && HasPress)
+            if (!(HasFocus || IsGlobal))
             {
-                // Ensure that this move event is from a pointer that is pressing the interactable
-                int matchingPointerCount = 0;
-                foreach (var pressingInputSource in pressingInputSources)
-                {
-                    if (pressingInputSource == eventData.InputSource)
-                    {
-                        matchingPointerCount++;
-                    }
-                }
-
-                return matchingPointerCount > 0;
+                return false;
             }
 
-            return false;
+            if (!HasPress)
+            {
+                return false;
+            }
+
+            // Ensure that this move event is from a pointer that is pressing the interactable
+            int matchingPointerCount = 0;
+            foreach (var pressingInputSource in pressingInputSources)
+            {
+                if (pressingInputSource == eventData.InputSource)
+                {
+                    matchingPointerCount++;
+                }
+            }
+
+            return matchingPointerCount > 0;
         }
 
         /// <summary>
@@ -1349,7 +1358,7 @@ namespace Microsoft.MixedReality.Toolkit.UI
         /// <inheritdoc/>
         public void OnBeforeFocusChange(FocusEventData eventData)
         {
-            if (!IsEnabled)
+            if (!CanInteract())
             {
                 return;
             }
@@ -1382,22 +1391,20 @@ namespace Microsoft.MixedReality.Toolkit.UI
         /// <inheritdoc/>
         public void OnFocusEnter(FocusEventData eventData)
         {
-            if (!IsEnabled)
+            if (CanInteract())
             {
-                return;
+                Debug.Assert(focusingPointers.Count > 0,
+                    "OnFocusEnter called but focusingPointers == 0. Most likely caused by the presence of a child object " +
+                    "that is handling IMixedRealityFocusChangedHandler");
+
+                HasFocus = true;
             }
-
-            Debug.Assert(focusingPointers.Count > 0,
-                "OnFocusEnter called but focusingPointers == 0. Most likely caused by the presence of a child object " +
-                "that is handling IMixedRealityFocusChangedHandler");
-
-            HasFocus = true;
         }
 
         /// <inheritdoc/>
         public void OnFocusExit(FocusEventData eventData)
         {
-            if (!IsEnabled || !HasFocus)
+            if (!CanInteract() && !HasFocus)
             {
                 return;
             }
@@ -1421,12 +1428,7 @@ namespace Microsoft.MixedReality.Toolkit.UI
         /// </summary>
         public void OnSpeechKeywordRecognized(SpeechEventData eventData)
         {
-            if (!IsEnabled)
-            {
-                return;
-            }
-
-            if (eventData.Command.Keyword == VoiceCommand && (!VoiceRequiresFocus || HasFocus))
+            if (eventData.Command.Keyword == VoiceCommand && (!VoiceRequiresFocus || HasFocus) && IsEnabled)
             {
                 StartGlobalVisual(true);
                 HasVoiceCommand = true;
@@ -1464,11 +1466,6 @@ namespace Microsoft.MixedReality.Toolkit.UI
 
         public void OnTouchStarted(HandTrackingInputEventData eventData)
         {
-            if (!IsEnabled)
-            {
-                return;
-            }
-
             HasPress = true;
             HasPhysicalTouch = true;
             eventData.Use();
@@ -1476,11 +1473,6 @@ namespace Microsoft.MixedReality.Toolkit.UI
 
         public void OnTouchCompleted(HandTrackingInputEventData eventData)
         {
-            if (!IsEnabled)
-            {
-                return;
-            }
-
             HasPress = false;
             HasPhysicalTouch = false;
             eventData.Use();

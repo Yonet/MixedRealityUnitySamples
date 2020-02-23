@@ -13,7 +13,6 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
     /// the "MixedRealityToolkit/Standard" shader "_ProximityLight" feature.
     /// </summary>
     [ExecuteInEditMode]
-    [AddComponentMenu("Scripts/MRTK/Core/ProximityLight")]
     public class ProximityLight : MonoBehaviour
     {
         // Two proximity lights are supported at this time.

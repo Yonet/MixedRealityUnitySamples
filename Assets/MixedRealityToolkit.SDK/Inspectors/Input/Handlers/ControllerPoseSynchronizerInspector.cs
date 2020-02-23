@@ -18,7 +18,6 @@ namespace Microsoft.MixedReality.Toolkit.Input.Editor
         private SerializedProperty handedness;
         private SerializedProperty useSourcePoseData;
         private SerializedProperty poseAction;
-        private SerializedProperty destroyOnSourceLost;
 
         protected bool DrawHandednessProperty = true;
 
@@ -28,7 +27,6 @@ namespace Microsoft.MixedReality.Toolkit.Input.Editor
             handedness = serializedObject.FindProperty("handedness");
             useSourcePoseData = serializedObject.FindProperty("useSourcePoseData");
             poseAction = serializedObject.FindProperty("poseAction");
-            destroyOnSourceLost = serializedObject.FindProperty("destroyOnSourceLost");
         }
 
         public override void OnInspectorGUI()
@@ -40,47 +38,42 @@ namespace Microsoft.MixedReality.Toolkit.Input.Editor
 
             serializedObject.Update();
 
-            using (var c = new EditorGUI.ChangeCheckScope())
+            EditorGUILayout.Space();
+            EditorGUI.BeginChangeCheck();
+            synchronizationSettingsFoldout = EditorGUILayout.Foldout(synchronizationSettingsFoldout, "Synchronization Settings", true);
+
+            if (EditorGUI.EndChangeCheck())
             {
-                synchronizationSettingsFoldout = EditorGUILayout.Foldout(synchronizationSettingsFoldout, "Synchronization Settings", true);
-                if (c.changed)
-                {
-                    SessionState.SetBool(SynchronizationSettingsKey, synchronizationSettingsFoldout);
-                }
+                SessionState.SetBool(SynchronizationSettingsKey, synchronizationSettingsFoldout);
             }
 
-            if (!synchronizationSettingsFoldout) 
-            { 
-                return; 
-            }
+            if (!synchronizationSettingsFoldout) { return; }
 
-            using (new EditorGUI.IndentLevelScope())
+            EditorGUI.indentLevel++;
+
+            if (DrawHandednessProperty)
             {
-                if (DrawHandednessProperty)
+                var currentHandedness = (Handedness)handedness.enumValueIndex;
+                var handIndex = currentHandedness == Handedness.Right ? 1 : 0;
+
+                EditorGUI.BeginChangeCheck();
+                var newHandednessIndex = EditorGUILayout.Popup(handedness.displayName, handIndex, HandednessLabels);
+
+                if (EditorGUI.EndChangeCheck())
                 {
-                    var currentHandedness = (Handedness)handedness.enumValueIndex;
-                    var handIndex = currentHandedness == Handedness.Right ? 1 : 0;
-
-                    using (var c = new EditorGUI.ChangeCheckScope())
-                    {
-                        var newHandednessIndex = EditorGUILayout.Popup(handedness.displayName, handIndex, HandednessLabels);
-                        if (c.changed)
-                        {
-                            currentHandedness = newHandednessIndex == 0 ? Handedness.Left : Handedness.Right;
-                            handedness.enumValueIndex = (int)currentHandedness;
-                        }
-                    }
-                }
-
-                EditorGUILayout.PropertyField(destroyOnSourceLost);
-                EditorGUILayout.PropertyField(useSourcePoseData);
-
-                if (!useSourcePoseData.boolValue)
-                {
-                    EditorGUILayout.PropertyField(poseAction);
+                    currentHandedness = newHandednessIndex == 0 ? Handedness.Left : Handedness.Right;
+                    handedness.enumValueIndex = (int)currentHandedness;
                 }
             }
 
+            EditorGUILayout.PropertyField(useSourcePoseData);
+
+            if (!useSourcePoseData.boolValue)
+            {
+                EditorGUILayout.PropertyField(poseAction);
+            }
+
+            EditorGUI.indentLevel--;
             serializedObject.ApplyModifiedProperties();
         }
     }

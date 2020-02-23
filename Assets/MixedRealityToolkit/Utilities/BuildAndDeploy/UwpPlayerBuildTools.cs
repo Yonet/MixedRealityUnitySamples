@@ -91,6 +91,7 @@ namespace Microsoft.MixedReality.Toolkit.Build.Editor
                     if (showDialog &&
                         !EditorUtility.DisplayDialog(PlayerSettings.productName, "Build Complete", "OK", "Build AppX"))
                     {
+                        
                         EditorAssemblyReloadManager.LockReloadAssemblies = true;
                         await UwpAppxBuildTools.BuildAppxAsync(uwpBuildInfo, cancellationToken);
                         EditorAssemblyReloadManager.LockReloadAssemblies = false;

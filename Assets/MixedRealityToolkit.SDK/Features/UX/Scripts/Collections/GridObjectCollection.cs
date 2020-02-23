@@ -12,7 +12,6 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
     /// control panels or sets of prefab/objects.
     /// </summary>
     [HelpURL("https://microsoft.github.io/MixedRealityToolkit-Unity/Documentation/README_ObjectCollection.html")]
-    [AddComponentMenu("Scripts/MRTK/SDK/GridObjectCollection")]
     [ExecuteAlways]
     public partial class GridObjectCollection : BaseObjectCollection
     {
@@ -458,6 +457,7 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
         }
 
         #region asset version migration
+#if UNITY_EDITOR
         private const int CurrentAssetVersion = 1;
 
         [SerializeField]
@@ -503,6 +503,7 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
 
             return objectName;
         }
+#endif
         #endregion
 
     }

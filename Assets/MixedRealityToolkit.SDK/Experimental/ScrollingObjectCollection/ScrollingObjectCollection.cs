@@ -16,7 +16,6 @@ namespace Microsoft.MixedReality.Toolkit.Experimental.UI
     /// <summary>
     /// A set of child objects organized in a series of Rows/Columns that can scroll in either the X or Y direction.
     /// </summary>
-    [AddComponentMenu("Scripts/MRTK/SDK/ScrollingObjectCollection")]
     public class ScrollingObjectCollection : BaseObjectCollection, IMixedRealityPointerHandler, IMixedRealityTouchHandler, IMixedRealitySourceStateHandler, IMixedRealityInputHandler
     {
         /// <summary>

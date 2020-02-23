@@ -2,19 +2,25 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using Microsoft.MixedReality.Toolkit.Utilities;
+using Microsoft.MixedReality.Toolkit.WindowsMixedReality.Input;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 #if WINDOWS_UWP
 using System.IO;
+using System.Threading.Tasks;
+using Windows.Storage;
+using Windows.Storage.Pickers;
+using Windows.Storage.Provider;
 #endif
 
 namespace Microsoft.MixedReality.Toolkit.Input
 {
+
     /// <summary>
     /// Record joint positions of a hand and log them for use in simulated hands.
     /// </summary>
-    [AddComponentMenu("Scripts/MRTK/Providers/WindowsMixedRealityHandRecorder")]
     public class WindowsMixedRealityHandRecorder : MonoBehaviour
     {
         private static readonly int jointCount = Enum.GetNames(typeof(TrackedHandJoint)).Length;
@@ -49,7 +55,7 @@ namespace Microsoft.MixedReality.Toolkit.Input
 
         private void RecordHandStart(Handedness handedness)
         {
-            HandJointUtils.TryGetJointPose(ReferenceJoint, handedness, out MixedRealityPose joint);
+            HandJointUtils.TryGetJointPose<WindowsMixedRealityArticulatedHand>(ReferenceJoint, handedness, out MixedRealityPose joint);
             offset = joint.Position;
             recordingHand = handedness;
         }
@@ -59,7 +65,7 @@ namespace Microsoft.MixedReality.Toolkit.Input
             MixedRealityPose[] jointPoses = new MixedRealityPose[jointCount];
             for (int i = 0; i < jointCount; ++i)
             {
-                HandJointUtils.TryGetJointPose((TrackedHandJoint)i, recordingHand, out jointPoses[i]);
+                HandJointUtils.TryGetJointPose<WindowsMixedRealityArticulatedHand>((TrackedHandJoint)i, recordingHand, out jointPoses[i]);
             }
 
             ArticulatedHandPose pose = new ArticulatedHandPose();
@@ -71,7 +77,7 @@ namespace Microsoft.MixedReality.Toolkit.Input
             StoreRecordedHandPose(pose.ToJson(), filename);
         }
 
-#if WINDOWS_UWP
+        #if WINDOWS_UWP
         private static void StoreRecordedHandPose(string data, string filename)
         {
             string path = Path.Combine(Application.persistentDataPath, filename);
@@ -80,12 +86,12 @@ namespace Microsoft.MixedReality.Toolkit.Input
                 writer.Write(data);
             }
         }
-#else
+        #else
         private static void StoreRecordedHandPose(string data, string filename)
         {
             Debug.Log(data);
         }
-#endif
+        #endif
     }
 
 }

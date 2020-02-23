@@ -9,7 +9,6 @@ namespace Microsoft.MixedReality.Toolkit.Physics
     /// A Distorter that distorts points based on their distance and direction from the
     /// center of the sphere of size 2.
     /// </summary>
-    [AddComponentMenu("Scripts/MRTK/Core/DistorterSphere")]
     public class DistorterSphere : Distorter
     {
         public Vector3 SphereCenter

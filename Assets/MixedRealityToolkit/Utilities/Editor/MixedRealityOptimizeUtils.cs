@@ -28,11 +28,7 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
         {
             if (IsBuildTargetOpenVR())
             {
-                // Ensure compatibility with the pre-2019.3 XR architecture for customers / platforms
-                // with legacy requirements.
-#pragma warning disable 0618
                 if (PlayerSettings.VROculus.sharedDepthBuffer)
-#pragma warning restore 0618
                 {
                     return true;
                 }
@@ -40,11 +36,7 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
             else if (IsBuildTargetUWP())
             {
 #if UNITY_2019_1_OR_NEWER
-                // Ensure compatibility with the pre-2019.3 XR architecture for customers / platforms
-                // with legacy requirements.
-#pragma warning disable 0618
                 if (PlayerSettings.VRWindowsMixedReality.depthBufferSharingEnabled)
-#pragma warning restore 0618
                 {
                     return true;
                 }
@@ -65,20 +57,12 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
         {
             if (IsBuildTargetOpenVR())
             {
-                // Ensure compatibility with the pre-2019.3 XR architecture for customers / platforms
-                // with legacy requirements.
-#pragma warning disable 0618
                 PlayerSettings.VROculus.sharedDepthBuffer = enableDepthBuffer;
-#pragma warning restore 0618
             }
             else if (IsBuildTargetUWP())
             {
-#if UNITY_2019_1_OR_NEWER
-                // Ensure compatibility with the pre-2019.3 XR architecture for customers / platforms
-                // with legacy requirements.
-#pragma warning disable 0618
+#if UNITY_2019
                 PlayerSettings.VRWindowsMixedReality.depthBufferSharingEnabled = enableDepthBuffer;
-#pragma warning restore 0618
 #else
                 var playerSettings = GetSettingsObject("PlayerSettings");
                 ChangeProperty(playerSettings,
@@ -91,11 +75,7 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
         public static bool IsWMRDepthBufferFormat16bit()
         {
 #if UNITY_2019_1_OR_NEWER
-            // Ensure compatibility with the pre-2019.3 XR architecture for customers / platforms
-            // with legacy requirements.
-#pragma warning disable 0618
             return PlayerSettings.VRWindowsMixedReality.depthBufferFormat == PlayerSettings.VRWindowsMixedReality.DepthBufferFormat.DepthBufferFormat16Bit;
-#pragma warning restore 0618
 #else
             var playerSettings = GetSettingsObject("PlayerSettings");
             var property = playerSettings?.FindProperty("vrSettings.hololens.depthFormat");
@@ -107,25 +87,17 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
         {
             int depthFormat = set16BitDepthBuffer ? 0 : 1;
 
-            // Ensure compatibility with the pre-2019.3 XR architecture for customers / platforms
-            // with legacy requirements.
-#pragma warning disable 0618
             PlayerSettings.VRCardboard.depthFormat = depthFormat;
             PlayerSettings.VRDaydream.depthFormat = depthFormat;
-#pragma warning restore 0618
 
             var playerSettings = GetSettingsObject("PlayerSettings");
-#if UNITY_2019_1_OR_NEWER
-            // Ensure compatibility with the pre-2019.3 XR architecture for customers / platforms
-            // with legacy requirements.
-#pragma warning disable 0618
-            PlayerSettings.VRWindowsMixedReality.depthBufferFormat = set16BitDepthBuffer ?
-                PlayerSettings.VRWindowsMixedReality.DepthBufferFormat.DepthBufferFormat16Bit :
-                PlayerSettings.VRWindowsMixedReality.DepthBufferFormat.DepthBufferFormat24Bit;
-#pragma warning restore 0618
+#if UNITY_2019
+        PlayerSettings.VRWindowsMixedReality.depthBufferFormat = set16BitDepthBuffer ? 
+            PlayerSettings.VRWindowsMixedReality.DepthBufferFormat.DepthBufferFormat16Bit :
+            PlayerSettings.VRWindowsMixedReality.DepthBufferFormat.DepthBufferFormat24Bit;
 
-            ChangeProperty(playerSettings,
-                "vrSettings.lumin.depthFormat",
+        ChangeProperty(playerSettings, 
+                "vrSettings.lumin.depthFormat", 
                 property => property.intValue = depthFormat);
 #else
             ChangeProperty(playerSettings,
@@ -136,27 +108,27 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
 
         public static bool IsRealtimeGlobalIlluminationEnabled()
         {
-            var lightmapSettings = GetLightmapSettings();
+            var lightmapSettings = GetLighmapSettings();
             var property = lightmapSettings?.FindProperty("m_GISettings.m_EnableRealtimeLightmaps");
             return property != null && property.boolValue;
         }
 
         public static void SetRealtimeGlobalIlluminationEnabled(bool enabled)
         {
-            var lightmapSettings = GetLightmapSettings();
+            var lightmapSettings = GetLighmapSettings();
             ChangeProperty(lightmapSettings, "m_GISettings.m_EnableRealtimeLightmaps", property => property.boolValue = enabled);
         }
 
         public static bool IsBakedGlobalIlluminationEnabled()
         {
-            var lightmapSettings = GetLightmapSettings();
+            var lightmapSettings = GetLighmapSettings();
             var property = lightmapSettings?.FindProperty("m_GISettings.m_EnableBakedLightmaps");
             return property != null && property.boolValue;
         }
 
         public static void SetBakedGlobalIlluminationEnabled(bool enabled)
         {
-            var lightmapSettings = GetLightmapSettings();
+            var lightmapSettings = GetLighmapSettings();
             ChangeProperty(lightmapSettings, "m_GISettings.m_EnableBakedLightmaps", property => property.boolValue = enabled);
         }
 
@@ -198,7 +170,7 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
             return new SerializedObject(settings);
         }
 
-        public static SerializedObject GetLightmapSettings()
+        public static SerializedObject GetLighmapSettings()
         {
             var getLightmapSettingsMethod = typeof(LightmapEditorSettings).GetMethod("GetLightmapSettings", BindingFlags.Static | BindingFlags.NonPublic);
             var lightmapSettings = getLightmapSettingsMethod.Invoke(null, null) as UnityEngine.Object;

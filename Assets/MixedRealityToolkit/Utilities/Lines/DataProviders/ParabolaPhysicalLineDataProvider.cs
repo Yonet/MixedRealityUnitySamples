@@ -8,7 +8,6 @@ namespace Microsoft.MixedReality.Toolkit.Utilities
     /// <summary>
     /// Creates a parabolic line based on physics.
     /// </summary>
-    [AddComponentMenu("Scripts/MRTK/Core/ParabolaPhysicalLineDataProvider")]
     public class ParabolaPhysicalLineDataProvider : ParabolaLineDataProvider
     {
         [SerializeField]

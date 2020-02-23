@@ -29,7 +29,6 @@ namespace Microsoft.MixedReality.Toolkit
     /// The Profile can be swapped out at any time to meet the needs of your project.
     /// </summary>
     [DisallowMultipleComponent]
-    [AddComponentMenu("Scripts/MRTK/Core/MixedRealityToolkit")]
     public class MixedRealityToolkit : MonoBehaviour, IMixedRealityServiceRegistrar
     {
         private static bool isInitializing = false;
@@ -457,7 +456,7 @@ namespace Microsoft.MixedReality.Toolkit
 
                     if (typeof(IMixedRealityExtensionService).IsAssignableFrom(configuration.ComponentType.Type))
                     {
-                        object[] args = { configuration.ComponentName, configuration.Priority, configuration.Profile };
+                        object[] args = { configuration.ComponentName, configuration.Priority, configuration.ConfigurationProfile };
                         RegisterService<IMixedRealityExtensionService>(configuration.ComponentType, configuration.RuntimePlatform, args);
                     }
                 }
@@ -966,9 +965,9 @@ namespace Microsoft.MixedReality.Toolkit
             // later may rely on those which are initialized first.
             var orderedActiveSystems = activeSystems.OrderByDescending(m => m.Value.Priority);
 
-            foreach (var service in orderedActiveSystems)
+            foreach (var system in orderedActiveSystems)
             {
-                Type type = service.Key;
+                Type type = system.Key;
 
                 if (typeof(IMixedRealityBoundarySystem).IsAssignableFrom(type))
                 {
@@ -1007,36 +1006,23 @@ namespace Microsoft.MixedReality.Toolkit
 
         private bool ExecuteOnAllServicesInOrder(Action<IMixedRealityService> execute)
         {
-            if (!HasProfileAndIsInitialized)
-            {
-                return false;
-            }
-
-            var services = MixedRealityServiceRegistry.GetAllServices();
-            int length = services.Count;
-            for (int i = 0; i < length; i++)
-            {
-                execute(services[i]);
-            }
-
-            return true;
+            var orderedSystems = MixedRealityServiceRegistry.GetAllServices();
+            return ExecuteOnAllServices(orderedSystems, execute);
         }
 
         private bool ExecuteOnAllServicesReverseOrder(Action<IMixedRealityService> execute)
         {
-            if (!HasProfileAndIsInitialized)
+            var orderedSystems = MixedRealityServiceRegistry.GetAllServices().Reverse();
+            return ExecuteOnAllServices(orderedSystems, execute);
+        }
+
+        private bool ExecuteOnAllServices(IEnumerable<IMixedRealityService> services, Action<IMixedRealityService> execute)
+        {
+            if (!HasProfileAndIsInitialized) { return false; }
+            foreach (var system in services)
             {
-                return false;
+                execute(system);
             }
-
-            var services = MixedRealityServiceRegistry.GetAllServices();
-            int length = services.Count;
-
-            for (int i = length - 1; i >= 0; i--)
-            {
-                execute(services[i]);
-            }
-
             return true;
         }
 
@@ -1130,13 +1116,9 @@ namespace Microsoft.MixedReality.Toolkit
 
             if (!CanGetService(interfaceType)) { return new List<T>() as IReadOnlyList<T>; }
 
-            bool isNullServiceName = string.IsNullOrEmpty(serviceName);
-            var systems = MixedRealityServiceRegistry.GetAllServices();
-            int length = systems.Count;
-            for (int i = 0; i < length; i++)
+            foreach (var service in MixedRealityServiceRegistry.GetAllServices())
             {
-                IMixedRealityService service = systems[i];
-                if (service is T && (isNullServiceName || service.Name == serviceName))
+                if (service is T && (string.IsNullOrEmpty(serviceName) || service.Name == serviceName))
                 {
                     services.Add((T)service);
                 }

@@ -27,15 +27,6 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
             // Detect when we enter player mode so we can try checking for optimal configuration
             EditorApplication.playModeStateChanged += OnPlayStateModeChanged;
 
-            // Subscribe to editor application update which will call us once the editor is initialized and running
-            EditorApplication.update += OnInit;
-        }
-
-        private static void OnInit()
-        {
-            // We only want to execute once to initialize, unsubscribe from update event
-            EditorApplication.update -= OnInit;
-
             ShowProjectConfigurationDialog();
         }
 
@@ -53,13 +44,20 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
         /// </summary>
         public static bool IgnoreProjectConfigForSession
         {
-            get => SessionState.GetBool(SessionKey, false);
-            set => SessionState.SetBool(SessionKey, value);
+            get
+            {
+                return SessionState.GetBool(SessionKey, false);
+            }
+
+            set
+            {
+                SessionState.SetBool(SessionKey, value);
+            }
         }
 
         private static void OnPlayStateModeChanged(PlayModeStateChange state)
         {
-            if (state == PlayModeStateChange.EnteredPlayMode && MixedRealityProjectPreferences.RunOptimalConfiguration)
+            if (state == PlayModeStateChange.EnteredPlayMode && MixedRealityPreferences.RunOptimalConfiguration)
             {
                 LogConfigurationWarnings();
             }
@@ -69,7 +67,7 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
         {
             if (!EditorApplication.isPlayingOrWillChangePlaymode
                 && !IgnoreProjectConfigForSession
-                && !MixedRealityProjectPreferences.IgnoreSettingsPrompt
+                && !MixedRealityPreferences.IgnoreSettingsPrompt
                 && !MixedRealityProjectConfigurator.IsProjectConfigured())
             {
                 MixedRealityProjectConfiguratorWindow.ShowWindow();
@@ -81,9 +79,7 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
         /// </summary>
         private static void LogConfigurationWarnings()
         {
-            // Ensure compatibility with the pre-2019.3 XR architecture for customers / platforms
-            // with legacy requirements.
-            if (!XRSettingsUtilities.LegacyXREnabled)
+            if (!PlayerSettings.virtualRealitySupported)
             {
                 Debug.LogWarning("<b>Virtual reality supported</b> not enabled. Check <i>XR Settings</i> under <i>Player Settings</i>");
             }
@@ -110,7 +106,7 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Editor
 
                 if (!AudioSettings.GetSpatializerPluginName().Equals(MSFT_AudioSpatializerPlugin))
                 {
-                    // If using UWP, developers should use the Microsoft Audio Spatializer plugin
+                    // If using UWP, developers should use the Microsoft Audio Spatilizer plugin
                     Debug.LogWarning("<b>Audio Spatializer Plugin</b> not currently set to <i>" + MSFT_AudioSpatializerPlugin + "</i>. Switch to <i>" + MSFT_AudioSpatializerPlugin + "</i> under <i>Project Settings</i> > <i>Audio</i> > <i>Spatializer Plugin</i>");
                 }
             }

@@ -39,13 +39,11 @@ namespace Microsoft.MixedReality.Toolkit.Input
         [SerializeField]
         private BaseMixedRealityProfile deviceManagerProfile;
 
-        /// <inheritdoc />
-        public BaseMixedRealityProfile Profile => deviceManagerProfile;
-
         /// <summary>
         /// Device manager specific configuration profile.
         /// </summary>
         public BaseMixedRealityProfile DeviceManagerProfile => deviceManagerProfile;
+
 
         /// <summary>
         /// Constructor.

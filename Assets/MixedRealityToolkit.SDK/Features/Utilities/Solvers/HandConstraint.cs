@@ -13,7 +13,6 @@ namespace Microsoft.MixedReality.Toolkit.Utilities.Solvers
     /// This solver is intended to work with <see cref="Microsoft.MixedReality.Toolkit.Input.IMixedRealityHand"/> but also works with <see cref="Microsoft.MixedReality.Toolkit.Input.IMixedRealityController"/>. 
     /// </summary>
     [RequireComponent(typeof(HandBounds))]
-    [AddComponentMenu("Scripts/MRTK/SDK/HandConstraint")]
     public class HandConstraint : Solver
     {
         /// <summary>

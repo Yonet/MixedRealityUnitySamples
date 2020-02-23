@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using Microsoft.MixedReality.Toolkit.Utilities;
 using Microsoft.MixedReality.Toolkit.Utilities.Editor;
 using System.Collections.Generic;
 using UnityEditor;
@@ -41,7 +40,7 @@ namespace Microsoft.MixedReality.Toolkit.Input.Editor
         /// <param name="axisMappings">Optional array of Axis Mappings, to configure your own custom set</param>
         public static void CheckUnityInputManagerMappings(InputManagerAxis[] axisMappings)
         {
-            EnsureInputManagerReference();
+            AssureInputManagerReference();
 
             if (axisMappings != null)
             {
@@ -66,7 +65,7 @@ namespace Microsoft.MixedReality.Toolkit.Input.Editor
         /// <param name="axisMappings">Optional array of Axis Mappings, to configure your own custom set</param>
         public static void RemoveMappings(InputManagerAxis[] axisMappings)
         {
-            EnsureInputManagerReference();
+            AssureInputManagerReference();
 
             if (axisMappings != null)
             {
@@ -84,7 +83,7 @@ namespace Microsoft.MixedReality.Toolkit.Input.Editor
 
         private static void AddAxis(InputManagerAxis axis)
         {
-            EnsureInputManagerReference();
+            AssureInputManagerReference();
 
             SerializedProperty axesProperty = inputManagerAsset.FindProperty("m_Axes");
 
@@ -150,7 +149,7 @@ namespace Microsoft.MixedReality.Toolkit.Input.Editor
 
         private static void RemoveAxis(string axis)
         {
-            EnsureInputManagerReference();
+            AssureInputManagerReference();
 
             SerializedProperty axesProperty = inputManagerAsset.FindProperty("m_Axes");
 
@@ -170,7 +169,7 @@ namespace Microsoft.MixedReality.Toolkit.Input.Editor
         /// </summary>
         public static bool DoesAxisNameExist(string axisName)
         {
-            EnsureInputManagerReference();
+            AssureInputManagerReference();
 
             if (AxisNames.Count == 0 || inputManagerAsset.UpdateIfRequiredOrScript())
             {
@@ -185,7 +184,7 @@ namespace Microsoft.MixedReality.Toolkit.Input.Editor
         /// </summary>
         private static void RefreshLocalAxesList()
         {
-            EnsureInputManagerReference();
+            AssureInputManagerReference();
 
             AxisNames.Clear();
 
@@ -197,12 +196,12 @@ namespace Microsoft.MixedReality.Toolkit.Input.Editor
             }
         }
 
-        private static void EnsureInputManagerReference()
+        private static void AssureInputManagerReference()
         {
             if (inputManagerAsset == null)
             {
                 // Grabs the actual asset file into a SerializedObject, so we can iterate through it and edit it.
-                inputManagerAsset = MixedRealityOptimizeUtils.GetSettingsObject("InputManager");
+                inputManagerAsset = new SerializedObject(AssetDatabase.LoadAssetAtPath("ProjectSettings/InputManager.asset", typeof(UnityEngine.Object)));
             }
         }
 
