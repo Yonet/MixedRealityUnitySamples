@@ -1,6 +1,6 @@
 # Mixed Reality Unity Samples
 
-Unity Version: __Unity 2019.3.2f1__.
+Unity Version: __Unity 2019.3.6f1__.
 
 
 ## Overview
