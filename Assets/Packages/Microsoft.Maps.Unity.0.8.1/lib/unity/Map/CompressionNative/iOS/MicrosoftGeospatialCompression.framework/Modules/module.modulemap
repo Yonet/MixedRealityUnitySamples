@@ -1,0 +1,6 @@
+framework module MicrosoftGeospatialCompression {
+  umbrella header "MicrosoftGeospatialCompression.h"
+
+  export *
+  module * { export * }
+}
